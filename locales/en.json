@@ -1,0 +1,38 @@
+{
+  "header": {
+    "title": "Eureka Collection Progress",
+    "progress": "Collected"
+  },
+  "filter": {
+    "all": "All",
+    "hideCompleted": "Hide Completed",
+    "rarity": "Rarity"
+  },
+  "table": {
+    "eureka": "Eureka",
+    "color": "Color",
+    "slot": "Slot",
+    "head": "Head",
+    "hand": "Hand",
+    "foot": "Foot",
+    "source": "Source"
+  },
+  "button": {
+    "export": "Export",
+    "import": "Import",
+    "selectFile": "Select File",
+    "copy": "Copy",
+    "download": "Download",
+    "close": "Close",
+    "or": "OR"
+  },
+  "message": {
+    "importSuccess": "Import successful",
+    "importError": "Import failed",
+    "exportSuccess": "Export successful",
+    "exportHint": "Copy the content below or download as file",
+    "importHint": "Paste JSON content or upload a file",
+    "importPlaceholder": "Paste JSON content here...",
+    "copySuccess": "Copied to clipboard!"
+  }
+}

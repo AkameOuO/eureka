@@ -1,0 +1,831 @@
+{
+  "eurekas": [
+    {
+      "id": "first_snow",
+      "name": {
+        "en": "First Snow",
+        "zh_tw": "初雪"
+      },
+      "colors": [
+        "white",
+        "blue",
+        "green",
+        "pink",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "rayplume",
+      "name": {
+        "en": "Rayplume",
+        "zh_tw": "光之羽"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "pink",
+        "yellow",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "rainbell",
+      "name": {
+        "en": "Rainbell",
+        "zh_tw": "雨鈴落"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "purple",
+        "pink",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "void_hunt",
+      "name": {
+        "en": "Void Hunt",
+        "zh_tw": "黑洞狩獵"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "purple",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "afterglow",
+      "name": {
+        "en": "Afterglow",
+        "zh_tw": "曦暉"
+      },
+      "colors": [
+        "green",
+        "pink",
+        "yellow",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "moonlit_ode",
+      "name": {
+        "en": "Moonlit Ode",
+        "zh_tw": "詠月"
+      },
+      "colors": [
+        "white",
+        "yellow",
+        "red",
+        "iridescent",
+        "purple"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "dream_waltz",
+      "name": {
+        "en": "Dream Waltz",
+        "zh_tw": "夢之舞"
+      },
+      "colors": [
+        "white",
+        "blue",
+        "pink",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "misty_waves",
+      "name": {
+        "en": "Misty Waves",
+        "zh_tw": "迷離浪"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "pink",
+        "yellow",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": "",
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "silvermoon",
+      "name": {
+        "en": "Silvermoon",
+        "zh_tw": "銀月"
+      },
+      "colors": [
+        "white"
+      ],
+      "images": [
+      ],
+      "rarity": 3,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "starlight",
+      "name": {
+        "en": "Starlight",
+        "zh_tw": "星芒"
+      },
+      "colors": [
+        "yellow"
+      ],
+      "images": [
+      ],
+      "rarity": 3,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "meteorite",
+      "name": {
+        "en": "Meteorite",
+        "zh_tw": "殞星"
+      },
+      "colors": [
+        "red"
+      ],
+      "images": [
+      ],
+      "rarity": 3,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "rosefall",
+      "name": {
+        "en": "Rosefall",
+        "zh_tw": "落玫"
+      },
+      "colors": [
+        "purple"
+      ],
+      "images": [
+      ],
+      "rarity": 3,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "sweet_candy",
+      "name": {
+        "en": "Sweet Candy",
+        "zh_tw": "蜜絲糖"
+      },
+      "colors": [
+        "pink"
+      ],
+      "images": [
+      ],
+      "rarity": 3,
+      "source": "",
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "winds_rhythm",
+      "name": {
+        "en": "Wind's Rhythm",
+        "zh_tw": "風之律"
+      },
+      "colors": [
+        "green",
+        "blue",
+        "yellow"
+      ],
+      "images": [
+      ],
+      "rarity": 4,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "lullaby",
+      "name": {
+        "en": "Lullaby",
+        "zh_tw": "搖籃曲"
+      },
+      "colors": [
+        "yellow",
+        "blue",
+        "red"
+      ],
+      "images": [
+      ],
+      "rarity": 4,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "melted_snow",
+      "name": {
+        "en": "Melted Snow",
+        "zh_tw": "雪絨融"
+      },
+      "colors": [
+        "white",
+        "blue",
+        "purple"
+      ],
+      "images": [
+      ],
+      "rarity": 4,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "masked_magic",
+      "name": {
+        "en": "Masked Magic",
+        "zh_tw": "假面魔術"
+      },
+      "colors": [
+        "green",
+        "purple",
+        "red"
+      ],
+      "images": [
+      ],
+      "rarity": 4,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "heart_kiss",
+      "name": {
+        "en": "Heart Kiss",
+        "zh_tw": "心之吻"
+      },
+      "colors": [
+        "yellow",
+        "red",
+        "blue"
+      ],
+      "images": [
+      ],
+      "rarity": 4,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "roseheart",
+      "name": {
+        "en": "Roseheart",
+        "zh_tw": "瑰愛"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "purple",
+        "pink",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "wild_blaze",
+      "name": {
+        "en": "Wild Blaze",
+        "zh_tw": "燎原"
+      },
+      "colors": [
+        "blue",
+        "purple",
+        "pink",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "flitterfin",
+      "name": {
+        "en": "游魚",
+        "zh_tw": ""
+      },
+      "colors": [
+        "blue",
+        "pink",
+        "yellow",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "swaying_lotus",
+      "name": {
+        "en": "風荷",
+        "zh_tw": ""
+      },
+      "colors": [
+        "green",
+        "pink",
+        "yellow",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "inky_shadow",
+      "name": {
+        "en": "WInky Shadow",
+        "zh_tw": "墨影"
+      },
+      "colors": [
+        "white",
+        "blue",
+        "green",
+        "purple",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "moon_lotus",
+      "name": {
+        "en": "Moon_Lotus",
+        "zh_tw": "月連笙"
+      },
+      "colors": [
+        "green",
+        "purple",
+        "pink",
+        "yellow",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": "",
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "book_of_life",
+      "name": {
+        "en": "Book of Life",
+        "zh_tw": "生命之書"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "purple",
+        "yellow",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "sunshower",
+      "name": {
+        "en": "Sunshower",
+        "zh_tw": "晴雨悠遊"
+      },
+      "colors": [
+        "blue",
+        "purple",
+        "pink",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "moon_laurel_rabbit",
+      "name": {
+        "en": "Moon Laurel Rabbit",
+        "zh_tw": "月桂兔"
+      },
+      "colors": [
+        "yellow"
+      ],
+      "images": [
+      ],
+      "rarity": 3,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "wishfield",
+      "tags": []
+    },
+    {
+      "id": "shroomling_lullaby",
+      "name": {
+        "en": "Shroomling Lullaby",
+        "zh_tw": "菇眠曲"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "yellow",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "itzaland",
+      "tags": []
+    },
+    {
+      "id": "lunar_astrolabe",
+      "name": {
+        "en": "Lunar Astrolabe",
+        "zh_tw": "星月儀"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "purple",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "itzaland",
+      "tags": []
+    },
+    {
+      "id": "icy_edge",
+      "name": {
+        "en": "Icy Edge",
+        "zh_tw": "霜刃之誓"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "purple",
+        "yellow",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "itzaland",
+      "tags": []
+    },
+    {
+      "id": "oracle_flame",
+      "name": {
+        "en": "Oracle Flame",
+        "zh_tw": "諭火"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "yellow",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "itzaland",
+      "tags": []
+    },
+    {
+      "id": "essence_of_tears",
+      "name": {
+        "en": "Essence of Tears",
+        "zh_tw": "淚之華"
+      },
+      "colors": [
+        "blue"
+      ],
+      "images": [
+      ],
+      "rarity": 3,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "itzaland",
+      "tags": []
+    },
+    {
+      "id": "distant_land",
+      "name": {
+        "en": "Distant Land",
+        "zh_tw": "山水遙"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "purple",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "itzaland",
+      "tags": []
+    },
+    {
+      "id": "mortal_farewell",
+      "name": {
+        "en": "Mortal Farewell",
+        "zh_tw": "別紅塵"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "yellow",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "itzaland",
+      "tags": []
+    }
+  ],
+  "colors": {
+    "white": {
+      "name": {
+        "en": "White",
+        "zh_tw": "白色"
+      },
+      "style": {
+        "background": "#F5F5F5",
+        "font": "#333333"
+      }
+    },
+    "blue": {
+      "name": {
+        "en": "Blue",
+        "zh_tw": "藍色"
+      },
+      "style": {
+        "background": "#64B5F6",
+        "font": "#333333"
+      }
+    },
+    "green": {
+      "name": {
+        "en": "Green",
+        "zh_tw": "綠色"
+      },
+      "style": {
+        "background": "#81C784",
+        "font": "#333333"
+      }
+    },
+    "red": {
+      "name": {
+        "en": "Red",
+        "zh_tw": "紅色"
+      },
+      "style": {
+        "background": "#EF7B7B",
+        "font": "#333333"
+      }
+    },
+    "purple": {
+      "name": {
+        "en": "Purple",
+        "zh_tw": "紫色"
+      },
+      "style": {
+        "background": "#BA68C8",
+        "font": "#333333"
+      }
+    },
+    "pink": {
+      "name": {
+        "en": "Pink",
+        "zh_tw": "粉色"
+      },
+      "style": {
+        "background": "#F06292",
+        "font": "#333333"
+      }
+    },
+    "yellow": {
+      "name": {
+        "en": "Yellow",
+        "zh_tw": "黃色"
+      },
+      "style": {
+        "background": "#FFD54F",
+        "font": "#333333"
+      }
+    },
+    "iridescent": {
+      "name": {
+        "en": "Iridescent",
+        "zh_tw": "彩色"
+      },
+      "style": {
+        "background": "linear-gradient(90deg, #FFB9C1 0%, #FFD4B4 25%, #FFFF99 50%, #A6FF9C 75%, #B4D7FF 100%)",
+        "font": "#333333"
+      }
+    }
+  },
+  "areas": {
+    "wishfield": {
+      "en": "Wishfield",
+      "zh_tw": "心願原野"
+    },
+    "itzaland": {
+      "en": "Itzaland",
+      "zh_tw": "伊贊之土"
+    }
+  }
+}
