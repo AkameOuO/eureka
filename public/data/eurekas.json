@@ -743,7 +743,7 @@
         "zh_tw": "白色"
       },
       "style": {
-        "background": "#F5F5F5",
+        "background": "linear-gradient(var(--color-gradient-direction), hsl(0, 0%, 90%), hsl(0, 0%, 100%))",
         "font": "#333333"
       }
     },
@@ -753,7 +753,7 @@
         "zh_tw": "藍色"
       },
       "style": {
-        "background": "#64B5F6",
+        "hue": 217,
         "font": "#333333"
       }
     },
@@ -763,7 +763,7 @@
         "zh_tw": "綠色"
       },
       "style": {
-        "background": "#81C784",
+        "hue": 135,
         "font": "#333333"
       }
     },
@@ -773,7 +773,7 @@
         "zh_tw": "紅色"
       },
       "style": {
-        "background": "#EF7B7B",
+        "hue": 0,
         "font": "#333333"
       }
     },
@@ -783,7 +783,7 @@
         "zh_tw": "紫色"
       },
       "style": {
-        "background": "#BA68C8",
+        "hue": 272,
         "font": "#333333"
       }
     },
@@ -793,7 +793,7 @@
         "zh_tw": "粉色"
       },
       "style": {
-        "background": "#F06292",
+        "hue": 348,
         "font": "#333333"
       }
     },
@@ -803,7 +803,7 @@
         "zh_tw": "黃色"
       },
       "style": {
-        "background": "#FFD54F",
+        "hue": 48,
         "font": "#333333"
       }
     },
@@ -813,7 +813,7 @@
         "zh_tw": "彩色"
       },
       "style": {
-        "background": "linear-gradient(90deg, #FFB9C1 0%, #FFD4B4 25%, #FFFF99 50%, #A6FF9C 75%, #B4D7FF 100%)",
+        "background": "linear-gradient(var(--color-gradient-direction), hsl(348, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 0%, hsl(18, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 25%, hsl(60, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 50%, hsl(114, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 75%, hsl(217, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 100%)",
         "font": "#333333"
       }
     }

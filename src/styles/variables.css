@@ -24,6 +24,14 @@
   --color-bg-subtle: #f9f9f9;
   --color-bg-overlay: rgba(0, 0, 0, 0.5);
 
+  /* Color Gradient Parameters for Eureka Spheres */
+  /* --color-gradient-direction: to bottom; */
+  --color-gradient-direction: -135deg;
+  --color-gradient-saturation-top: 75%;
+  --color-gradient-lightness-top: 80%;
+  --color-gradient-saturation-bottom: 50%;
+  --color-gradient-lightness-bottom: 90%;
+
   /* Status Colors */
   --color-success-bg: #e8f5e9;
   --color-success-text: #2e7d32;

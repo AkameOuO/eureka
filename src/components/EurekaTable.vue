@@ -64,6 +64,20 @@ function getCollectedCount(eureka: Eureka, collection: string[]): number {
 function getTotalCount(eureka: Eureka): number {
   return eureka.colors.length * slots.length
 }
+
+function getColorBackground(colorStyle: Record<string, any>): string {
+  // 如果已提供 background，直接使用
+  if (colorStyle.background) {
+    return colorStyle.background
+  }
+
+  // 如果提供 hue，動態生成漸層背景，使用 CSS 變數直接在字串內
+  if (colorStyle.hue !== undefined) {
+    return `linear-gradient(var(--color-gradient-direction), hsl(${colorStyle.hue}, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)), hsl(${colorStyle.hue}, var(--color-gradient-saturation-bottom), var(--color-gradient-lightness-bottom)))`
+  }
+
+  return 'transparent'
+}
 </script>
 
 <template>
@@ -106,7 +120,7 @@ function getTotalCount(eureka: Eureka): number {
             </td>
 
             <!-- 颜色列 -->
-            <td v-if="data.colors[color]" class="color-cell" :style="{ background: data.colors[color].style.background, color: data.colors[color].style.font }">
+            <td v-if="data.colors[color]" class="color-cell" :style="{ background: getColorBackground(data.colors[color].style), color: data.colors[color].style.font }">
               {{ getColorName(color, data) }}
             </td>
 
@@ -173,7 +187,7 @@ function getTotalCount(eureka: Eureka): number {
 }
 
 .eureka-table tbody tr.eureka-divider {
-  border-top: 2px solid #E91E63;
+  border-top: 2px solid #dddddd;
 }
 
 .eureka-table tbody tr:hover {
