@@ -427,8 +427,8 @@
     {
       "id": "flitterfin",
       "name": {
-        "en": "游魚",
-        "zh_tw": ""
+        "en": "Flitterfin",
+        "zh_tw": "游魚"
       },
       "colors": [
         "blue",
@@ -450,8 +450,8 @@
     {
       "id": "swaying_lotus",
       "name": {
-        "en": "風荷",
-        "zh_tw": ""
+        "en": "Swaying Lotus",
+        "zh_tw": "風荷"
       },
       "colors": [
         "green",
