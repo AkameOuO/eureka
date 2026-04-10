@@ -10,6 +10,7 @@ interface Props {
 
 interface Emits {
   (e: 'filter-change', rarities: number[], completed: boolean): void
+  (e: 'data-changed'): void
 }
 
 const props = defineProps<Props>()
@@ -101,9 +102,9 @@ function importFromText(): void {
 
   if (importData(importContent.value)) {
     importMessage.value = t('message.importSuccess') || 'Imported successfully!'
+    emit('data-changed')
     setTimeout(() => {
       closeImportModal()
-      window.location.reload()
     }, 1500)
   } else {
     importMessage.value = t('message.importError') || 'Invalid JSON format'

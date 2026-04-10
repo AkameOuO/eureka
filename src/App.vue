@@ -124,6 +124,11 @@ function handleLocaleChange(newLocale: string): void {
   locale.value = newLocale as any
   updateSettings({ locale: newLocale })
 }
+
+function handleDataChanged(): void {
+  // 重新讀取 localStorage 的最新資料，Vue 響應式系統自動更新 UI
+  storage.value = getStorage()
+}
 </script>
 
 <template>
@@ -143,6 +148,7 @@ function handleLocaleChange(newLocale: string): void {
           :visible-rarities="visibleRarities"
           :hide-completed="hideCompleted"
           @filter-change="handleFilterChange"
+          @data-changed="handleDataChanged"
         />
       </aside>
 
