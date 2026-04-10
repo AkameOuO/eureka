@@ -11,7 +11,7 @@ export interface Color {
   style: Style;
 }
 
-export interface Area {
+export interface Area extends Record<string, string> {
   en: string;
   zh_tw: string;
 }

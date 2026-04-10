@@ -6,10 +6,10 @@ import zh_tw from '../locales/zh_tw.json'
 
 // 所有可用的語言資源映射
 // 添加新語言時：1) 在上方導入新語言 JSON，2) 在此映射中添加，3) 在 locales/config.ts 中添加語言配置
-const messageMap: Record<string, object> = {
+const messageMap = {
   en,
   zh_tw
-}
+} as const
 
 // 獲取瀏覽器語言
 function getBrowserLocale(): string {
@@ -41,14 +41,16 @@ function isValidLocale(locale: string): boolean {
 }
 
 // 構建 messages 物件（只包含配置中定義的語言）
+type MessageKey = keyof typeof messageMap
+
 const messages = languageCodes.reduce(
   (acc, code) => {
-    if (messageMap[code]) {
-      acc[code] = messageMap[code]
+    if (code in messageMap) {
+      acc[code as MessageKey] = messageMap[code as MessageKey]
     }
     return acc
   },
-  {} as Record<string, object>
+  {} as Record<MessageKey, any>
 )
 
 // 確定初始語言
