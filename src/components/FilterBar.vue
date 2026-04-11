@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { exportData, importData, getStorage } from '../storage'
+import { useCollection } from '../composables/useCollection'
 
 interface Props {
   visibleRarities: number[]
@@ -16,6 +16,7 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 const { t } = useI18n()
+const { exportData, importData } = useCollection()
 
 const rarities = ref<number[]>([3, 4, 5])
 const hideCompleted = ref<boolean>(false)
@@ -88,6 +89,9 @@ function openImportModal(): void {
   importContent.value = ''
   importMessage.value = ''
   showImportModal.value = true
+  // 重置檔案輸入
+  const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
+  if (fileInput) fileInput.value = ''
 }
 
 function closeImportModal(): void {

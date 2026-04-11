@@ -38,17 +38,8 @@ export interface EurekasData {
   areas: Record<string, Area>;
 }
 
-export interface CollectionItem {
-  [key: string]: boolean;
-}
-
 export interface Settings {
-  locale?: string;
-  visibleRarities: number[];
-  hideCompleted: boolean;
-}
-
-export interface LocalStorage {
-  collection: string[];
-  settings: Settings;
+  locale?: string
+  visibleRarities: number[]
+  hideCompleted: boolean
 }

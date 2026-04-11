@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { EurekasData, LocalStorage } from './types'
-import { getStorage, setStorage, addToCollection, removeFromCollection, updateSettings } from './storage'
+import type { EurekasData } from './types'
+import { useCollection } from './composables/useCollection'
+import { useSettings } from './composables/useSettings'
 import { getLocalizedValue } from './utils/i18nHelpers'
 import EurekaTable from './components/EurekaTable.vue'
 import FilterBar from './components/FilterBar.vue'
@@ -11,11 +12,14 @@ import Header from './components/Header.vue'
 import ProgressBar from './components/ProgressBar.vue'
 
 const { locale, t } = useI18n()
+const { collection, toggleCollection, cleanCollection } = useCollection()
+const { settings, updateSettings } = useSettings()
+// 確保 collection 總是陣列
+const collectionValue = computed(() => collection.value || [])
 const data = ref<EurekasData | null>(null)
-const storage = ref<LocalStorage>(getStorage())
 const selectedArea = ref<string>('all')
-const visibleRarities = ref<number[]>(storage.value.settings.visibleRarities)
-const hideCompleted = ref<boolean>(storage.value.settings.hideCompleted)
+const visibleRarities = computed(() => settings.value.visibleRarities)
+const hideCompleted = computed(() => settings.value.hideCompleted)
 
 onMounted(async () => {
   try {
@@ -26,23 +30,7 @@ onMounted(async () => {
     if (data.value) {
       const validEurekaIds = new Set(data.value.eurekas.map(e => e.id))
       const validColors = new Set(Object.keys(data.value.colors))
-      const slots = new Set(['head', 'hand', 'foot'])
-
-      const cleanedCollection = storage.value.collection.filter(item => {
-        const parts = item.split('_')
-        if (parts.length < 3) return false
-
-        const slot = parts.pop()
-        const color = parts.pop()
-        const eurekaId = parts.join('_')
-
-        return eurekaId && color && slot && validEurekaIds.has(eurekaId) && validColors.has(color) && slots.has(slot)
-      })
-
-      if (cleanedCollection.length !== storage.value.collection.length) {
-        storage.value.collection = cleanedCollection
-        setStorage(storage.value)
-      }
+      cleanCollection(validEurekaIds, validColors)
     }
   } catch (error) {
     console.error('Failed to load eurekas data:', error)
@@ -69,9 +57,9 @@ const filteredEurekas = computed(() => {
       const collectedCount = eureka.colors.reduce((count, color) => {
         return (
           count +
-          (storage.value.collection.includes(`${eureka.id}_${color}_head`) ? 1 : 0) +
-          (storage.value.collection.includes(`${eureka.id}_${color}_hand`) ? 1 : 0) +
-          (storage.value.collection.includes(`${eureka.id}_${color}_foot`) ? 1 : 0)
+          (collectionValue.value.includes(`${eureka.id}_${color}_head`) ? 1 : 0) +
+          (collectionValue.value.includes(`${eureka.id}_${color}_hand`) ? 1 : 0) +
+          (collectionValue.value.includes(`${eureka.id}_${color}_foot`) ? 1 : 0)
         )
       }, 0)
       if (completedCount === collectedCount) {
@@ -85,7 +73,7 @@ const filteredEurekas = computed(() => {
 
 const totalProgress = computed(() => {
   return {
-    collected: storage.value.collection.length,
+    collected: collectionValue.value.length,
     total: data.value ? data.value.eurekas.reduce((sum, e) => sum + e.colors.length * 3, 0) : 0
   }
 })
@@ -98,22 +86,11 @@ const areas = computed(() => {
   }))
 })
 
-function toggleCollection(id: string): void {
-  if (storage.value.collection.includes(id)) {
-    removeFromCollection(id)
-  } else {
-    addToCollection(id)
-  }
-  storage.value = getStorage()
-}
-
 function handleAreaChange(area: string): void {
   selectedArea.value = area
 }
 
 function handleFilterChange(rarities: number[], completed: boolean): void {
-  visibleRarities.value = rarities
-  hideCompleted.value = completed
   updateSettings({
     visibleRarities: rarities,
     hideCompleted: completed
@@ -126,8 +103,8 @@ function handleLocaleChange(newLocale: string): void {
 }
 
 function handleDataChanged(): void {
-  // 重新讀取 localStorage 的最新資料，Vue 響應式系統自動更新 UI
-  storage.value = getStorage()
+  // 現在是單一實例模式，FilterBar 修改的 collection 就是這裡的同一個 ref
+  // 無需手動更新，Vue 響應式系統會自動處理
 }
 </script>
 
@@ -164,7 +141,7 @@ function handleDataChanged(): void {
           v-if="data"
           :eurekas="filteredEurekas"
           :data="data"
-          :collection="storage.collection"
+          :collection="collectionValue"
           @toggle="toggleCollection"
         />
 

@@ -12,7 +12,7 @@ interface Emits {
   (e: 'toggle', id: string): void
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 const { locale, t } = useI18n()
 
@@ -49,11 +49,12 @@ function getSourceText(eureka: Eureka): string {
   return locale.value === 'zh_tw' ? eureka.source.zh_tw : eureka.source.en
 }
 
-function getCollectedCount(eureka: Eureka, collection: string[]): number {
+function getCollectedCount(eureka: Eureka): number {
+  if (!props.collection || !Array.isArray(props.collection)) return 0
   let count = 0
   eureka.colors.forEach(color => {
     slots.forEach(slot => {
-      if (collection.includes(`${eureka.id}_${color}_${slot}`)) {
+      if (props.collection?.includes(`${eureka.id}_${color}_${slot}`)) {
         count++
       }
     })
@@ -114,7 +115,7 @@ function getColorBackground(colorStyle: Record<string, any>): string {
                   />
                 </div>
                 <div class="eureka-progress">
-                  {{ t('header.progress') }} {{ getCollectedCount(eureka, collection) }} / {{ getTotalCount(eureka) }}
+                  {{ t('header.progress') }} {{ getCollectedCount(eureka) }} / {{ getTotalCount(eureka) }}
                 </div>
               </div>
             </td>
@@ -129,7 +130,7 @@ function getColorBackground(colorStyle: Record<string, any>): string {
               <label class="checkbox-label">
                 <input
                   type="checkbox"
-                  :checked="collection.includes(`${eureka.id}_${color}_${slot}`)"
+                  :checked="props.collection?.includes(`${eureka.id}_${color}_${slot}`) ?? false"
                   @change="toggleSlot(eureka.id, color, slot)"
                 />
               </label>
