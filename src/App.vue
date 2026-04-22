@@ -10,6 +10,7 @@ import FilterBar from './components/FilterBar.vue'
 import AreaTabs from './components/AreaTabs.vue'
 import Header from './components/Header.vue'
 import ProgressBar from './components/ProgressBar.vue'
+import ToastContainer from './components/ToastContainer.vue'
 
 const { locale, t } = useI18n()
 const { collection, toggleCollection, cleanCollection } = useCollection()
@@ -113,6 +114,9 @@ function handleDataChanged(): void {
     <Header
       @locale-change="handleLocaleChange"
     />
+
+    <!-- 全局 Toast 通知 -->
+    <ToastContainer />
 
     <div class="content-wrapper">
       <!-- 左侧：Filter -->

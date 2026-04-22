@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCollection } from '../composables/useCollection'
+import { useToast } from '../composables/useToast'
 
 interface Props {
   visibleRarities: number[]
@@ -17,6 +18,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 const { t } = useI18n()
 const { exportData, importData } = useCollection()
+const { success, error } = useToast()
 
 const rarities = ref<number[]>([3, 4, 5])
 const hideCompleted = ref<boolean>(false)
@@ -24,7 +26,6 @@ const showExportModal = ref<boolean>(false)
 const showImportModal = ref<boolean>(false)
 const exportContent = ref<string>('')
 const importContent = ref<string>('')
-const importMessage = ref<string>('')
 
 watch(
   () => props.visibleRarities,
@@ -71,7 +72,7 @@ function closeExportModal(): void {
 
 function copyExportContent(): void {
   navigator.clipboard.writeText(exportContent.value).then(() => {
-    alert(t('message.copySuccess') || 'Copied!')
+    success(t('message.copySuccess') || 'Copied!')
   })
 }
 
@@ -87,7 +88,6 @@ function downloadExport(): void {
 
 function openImportModal(): void {
   importContent.value = ''
-  importMessage.value = ''
   showImportModal.value = true
   // 重置檔案輸入
   const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
@@ -100,18 +100,18 @@ function closeImportModal(): void {
 
 function importFromText(): void {
   if (!importContent.value.trim()) {
-    importMessage.value = t('message.importError') || 'Please paste JSON content'
+    error(t('message.importError') || 'Please paste JSON content')
     return
   }
 
   if (importData(importContent.value)) {
-    importMessage.value = t('message.importSuccess') || 'Imported successfully!'
+    success(t('message.importSuccess') || 'Imported successfully!')
     emit('data-changed')
     setTimeout(() => {
       closeImportModal()
     }, 1500)
   } else {
-    importMessage.value = t('message.importError') || 'Invalid JSON format'
+    error(t('message.importError') || 'Invalid JSON format')
   }
 }
 
@@ -234,11 +234,6 @@ function handleImportFile(event: Event): void {
               class="import-content"
               :placeholder="t('message.importPlaceholder') || 'Paste JSON content here...'"
             ></textarea>
-          </div>
-
-          <!-- Message -->
-          <div v-if="importMessage" :class="['import-message', importMessage.includes('success') || importMessage.includes('successfully') ? 'success' : 'error']">
-            {{ importMessage }}
           </div>
 
           <div class="modal-actions">
