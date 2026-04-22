@@ -7,8 +7,15 @@ function getCollectionFromStorage(): string[] {
   try {
     const data = localStorage.getItem(COLLECTION_KEY)
     if (!data) return DEFAULT_COLLECTION
-    return JSON.parse(data) as string[]
-  } catch {
+    const parsed = JSON.parse(data)
+    // Ensure it's an array
+    if (!Array.isArray(parsed)) {
+      console.warn('Invalid collection data in localStorage, resetting to default')
+      return DEFAULT_COLLECTION
+    }
+    return parsed
+  } catch (err) {
+    console.warn('Failed to parse collection from storage:', err)
     return DEFAULT_COLLECTION
   }
 }
@@ -70,6 +77,14 @@ function createCollection() {
   }
 
   const cleanCollection = (validIds: Set<string>, validColors: Set<string>): void => {
+    // Ensure collection.value is an array
+    if (!Array.isArray(collection.value)) {
+      console.warn('collection.value is not an array, resetting')
+      collection.value = []
+      saveCollectionToStorage(collection.value)
+      return
+    }
+
     const slots = new Set(['head', 'hand', 'foot'])
     const cleanedCollection = collection.value.filter(item => {
       const parts = item.split('_')

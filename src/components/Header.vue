@@ -5,6 +5,7 @@ import { languages } from '../../locales/config'
 
 interface Emits {
   (e: 'locale-change', locale: string): void
+  (e: 'open-sync-modal'): void
 }
 
 const emit = defineEmits<Emits>()
@@ -30,6 +31,7 @@ function getLocaleLabel(): string {
     </div>
 
     <div class="header-right">
+      <!-- Language Dropdown -->
       <div class="locale-dropdown">
         <button
           class="dropdown-toggle"

@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import type { EurekasData } from './types'
 import { useCollection } from './composables/useCollection'
 import { useSettings } from './composables/useSettings'
+import { useGoogleDriveSync } from './composables/useGoogleDriveSync'
 import { getLocalizedValue } from './utils/i18nHelpers'
 import EurekaTable from './components/EurekaTable.vue'
 import FilterBar from './components/FilterBar.vue'
@@ -11,12 +12,25 @@ import AreaTabs from './components/AreaTabs.vue'
 import Header from './components/Header.vue'
 import ProgressBar from './components/ProgressBar.vue'
 import ToastContainer from './components/ToastContainer.vue'
+import SyncModal from './components/SyncModal.vue'
+import ConflictDialog from './components/ConflictDialog.vue'
 
 const { locale, t } = useI18n()
 const { collection, toggleCollection, cleanCollection } = useCollection()
 const { settings, updateSettings } = useSettings()
+const { conflictData, resolveConflict } = useGoogleDriveSync()
+
+// Sync modal state
+const isSyncModalOpen = ref(false)
+
 // 確保 collection 總是陣列
-const collectionValue = computed(() => collection.value || [])
+const collectionValue = computed(() => {
+  if (!collection.value || !Array.isArray(collection.value)) {
+    console.warn('App.vue: collection is not an array, using empty array')
+    return []
+  }
+  return collection.value
+})
 const data = ref<EurekasData | null>(null)
 const selectedArea = ref<string>('all')
 const visibleRarities = computed(() => settings.value.visibleRarities)
@@ -113,6 +127,20 @@ function handleDataChanged(): void {
   <div id="app" class="app">
     <Header
       @locale-change="handleLocaleChange"
+      @open-sync-modal="isSyncModalOpen = true"
+    />
+
+    <!-- 同步 Modal -->
+    <SyncModal
+      :is-open="isSyncModalOpen"
+      @close="isSyncModalOpen = false"
+    />
+
+    <!-- 衝突對話框 -->
+    <ConflictDialog
+      :conflict-data="conflictData"
+      @close="() => {}"
+      @resolve="(version) => resolveConflict(version)"
     />
 
     <!-- 全局 Toast 通知 -->
@@ -130,6 +158,7 @@ function handleDataChanged(): void {
           :hide-completed="hideCompleted"
           @filter-change="handleFilterChange"
           @data-changed="handleDataChanged"
+          @open-record-modal="isSyncModalOpen = true"
         />
       </aside>
 
