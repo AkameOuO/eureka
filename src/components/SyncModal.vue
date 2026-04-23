@@ -33,30 +33,27 @@
         <section class="auth-section">
           <h3>{{ t('googleDrive.authentication') }}</h3>
 
-          <div v-if="!isSignedIn" class="auth-status not-signed-in">
+          <div v-if="!accessToken" class="auth-status not-signed-in">
             <div class="status-icon">⚠</div>
             <div class="status-text">{{ t('googleDrive.not_signed_in') }}</div>
-            <div class="status-hint">{{ t('googleDrive.sign_in_first') }}</div>
-            <div ref="googleButtonRef" class="google-button-container"></div>
-          </div>
-
-          <div v-else-if="!accessToken" class="auth-status need-permission">
-            <div class="status-icon">△</div>
-            <div class="status-text">{{ t('googleDrive.need_permission') }}</div>
-            <div class="status-hint">{{ t('googleDrive.request_drive_access') }}</div>
+            <div class="status-hint">{{ t('googleDrive.sign_in_drive_required') }}</div>
             <button @click="handleRequestPermission" class="btn btn-primary">
-              {{ t('googleDrive.request_permission') }}
+              {{ t('googleDrive.sign_in') }}
             </button>
           </div>
 
           <div v-else class="auth-status authorized">
-            <div class="status-icon">✓</div>
-            <div class="status-text">{{ t('googleDrive.authorized') }}</div>
-            <div v-if="userProfile" class="user-info-compact">
-              <img v-if="userProfile.picture" :src="userProfile.picture" :alt="userProfile.name" class="user-avatar-small" />
+            <div class="auth-main">
+              <div class="status-icon">✓</div>
               <div>
-                <div class="user-name-small">{{ userProfile.name }}</div>
-                <div class="user-email-small">{{ userProfile.email }}</div>
+                <div class="status-text">{{ t('googleDrive.authorized') }}</div>
+                <div v-if="userProfile" class="user-info-compact">
+                  <img v-if="userProfile.picture" :src="userProfile.picture" :alt="userProfile.name" class="user-avatar-small" />
+                  <div>
+                    <div class="user-name-small">{{ userProfile.name }}</div>
+                    <div class="user-email-small">{{ userProfile.email }}</div>
+                  </div>
+                </div>
               </div>
             </div>
             <button @click="handleSignOut" class="btn btn-secondary btn-small">
@@ -347,7 +344,6 @@ const emit = defineEmits<{
 }>()
 
 const newSaveName = ref('')
-const googleButtonRef = ref<HTMLDivElement | null>(null)
 const activeTab = ref<'sync' | 'import-export'>('sync')
 const exportContent = ref<string>('')
 const importContent = ref<string>('')
@@ -584,30 +580,6 @@ watch(activeTab, (newTab) => {
     prepareExport()
   }
 })
-
-/**
- * Render Google button when modal opens and user not signed in
- */
-watch(
-  () => ({ isOpen: props.isOpen, isSignedIn: isSignedIn.value }),
-  ({ isOpen, isSignedIn }) => {
-    const googleApi = (window as Window & { google?: any }).google
-
-    if (isOpen && !isSignedIn && googleButtonRef.value && googleApi) {
-      try {
-        // Render Google Sign-In button
-        googleApi.accounts.id.renderButton(googleButtonRef.value, {
-          theme: 'outline',
-          size: 'large',
-          width: '100%',
-        })
-      } catch (err) {
-        console.error('Error rendering Google button in modal:', err)
-      }
-    }
-  },
-  { flush: 'post' }
-)
 
 /**
  * Handle request permission
@@ -921,7 +893,7 @@ section h3 {
 /* Auth Section Styles */
 .auth-section {
   background: #f9f9f9;
-  padding: 16px;
+  padding: 12px;
   border-radius: 8px;
 }
 
@@ -948,10 +920,26 @@ section h3 {
 .auth-status.authorized {
   background: #e8f5e9;
   border: 1px solid #c8e6c9;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  padding: 10px 12px;
+}
+
+.auth-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
 .status-icon {
   font-size: 32px;
+}
+
+.auth-status.authorized .status-icon {
+  font-size: 20px;
 }
 
 .status-text {
@@ -970,9 +958,7 @@ section h3 {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 8px 0;
-  width: 100%;
-  justify-content: center;
+  margin: 4px 0 0;
 }
 
 .user-avatar-small {
@@ -1384,8 +1370,10 @@ section h3 {
 .btn-small {
   padding: 6px 8px;
   font-size: 11px;
-  margin-top: 4px;
-  display: inline-block;
+  margin-top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Modal Footer */
@@ -1434,6 +1422,12 @@ section h3 {
 
   .action-buttons .btn {
     width: 100%;
+  }
+
+  .auth-status.authorized {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
 </style>

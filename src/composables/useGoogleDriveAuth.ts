@@ -6,7 +6,10 @@ import { ref, computed } from 'vue'
  */
 
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
-const SCOPES = ['https://www.googleapis.com/auth/drive.appdata']
+const SCOPES = [
+  'https://www.googleapis.com/auth/drive.appdata',
+]
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata'
 
 // Storage keys
 const STORAGE_KEY_TOKEN = 'eureka_google_access_token'
@@ -25,9 +28,9 @@ const isLoading = ref(false)
 declare let google: any
 
 // OAuth client reference (will be set during initialization)
-let oAuthCodeClient: any = null
 let tokenClient: any = null
 let gisScriptPromise: Promise<void> | null = null
+let scopeRetryAttempted = false
 
 function loadGoogleIdentityServices(): Promise<void> {
   const googleApi = (window as Window & { google?: any }).google
@@ -83,6 +86,7 @@ function loadPersistedAuthState() {
     const savedToken = localStorage.getItem(STORAGE_KEY_TOKEN)
     const savedProfile = localStorage.getItem(STORAGE_KEY_PROFILE)
     const savedExpiry = localStorage.getItem(STORAGE_KEY_TOKEN_EXPIRY)
+    let hasValidToken = false
 
     // Check if token is still valid (not expired)
     if (savedToken && savedExpiry) {
@@ -91,6 +95,7 @@ function loadPersistedAuthState() {
 
       if (now < expiryTime) {
         accessToken.value = savedToken
+        hasValidToken = true
         console.log('Restored access token from localStorage')
       } else {
         console.log('Saved token expired, clearing')
@@ -102,12 +107,50 @@ function loadPersistedAuthState() {
     if (savedProfile) {
       userProfile.value = JSON.parse(savedProfile)
       if (userProfile.value) {
-        isSignedIn.value = true
         console.log('Restored user profile from localStorage')
       }
     }
+
+    if (hasValidToken) {
+      isSignedIn.value = true
+    }
   } catch (err) {
     console.error('Error loading persisted auth state:', err)
+  }
+}
+
+async function validateAccessTokenScopes(token: string): Promise<boolean> {
+  try {
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(token)}`)
+
+    if (!response.ok) {
+      return false
+    }
+
+    const tokenInfo = await response.json()
+    const scopes = String(tokenInfo.scope || '')
+      .split(' ')
+      .map((scope) => scope.trim())
+      .filter(Boolean)
+
+    return scopes.includes(DRIVE_SCOPE)
+  } catch (err) {
+    console.warn('Unable to validate access token scopes:', err)
+    return false
+  }
+}
+
+function clearAccessTokenOnly(): void {
+  accessToken.value = null
+  isSignedIn.value = false
+  userProfile.value = null
+
+  try {
+    localStorage.removeItem(STORAGE_KEY_TOKEN)
+    localStorage.removeItem(STORAGE_KEY_TOKEN_EXPIRY)
+    localStorage.removeItem(STORAGE_KEY_PROFILE)
+  } catch {
+    // Ignore storage cleanup failures.
   }
 }
 
@@ -150,12 +193,6 @@ async function initializeGIS() {
   }
 
   try {
-    google.accounts.id.initialize({
-      client_id: CLIENT_ID,
-      callback: handleCredentialResponse,
-      auto_select: false,
-    })
-
     // Initialize OAuth 2.0 token client for Drive API access (implicit grant)
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
@@ -168,6 +205,14 @@ async function initializeGIS() {
 
     // Try to restore persisted auth state
     loadPersistedAuthState()
+
+    if (accessToken.value) {
+      const tokenIsValid = await validateAccessTokenScopes(accessToken.value)
+      if (!tokenIsValid) {
+        console.warn('Restored token does not include the Drive scope, clearing cached token')
+        clearAccessTokenOnly()
+      }
+    }
   } catch (err) {
     console.error('Error initializing GIS:', err)
     error.value = 'Failed to initialize Google Identity Services'
@@ -175,43 +220,9 @@ async function initializeGIS() {
 }
 
 /**
- * Handle credential response from Google Sign-In
- */
-function handleCredentialResponse(response: any) {
-  try {
-    // Decode JWT to get user info
-    const token = response.credential
-    const decoded = decodeToken(token)
-
-    userProfile.value = {
-      name: decoded.name,
-      email: decoded.email,
-      picture: decoded.picture,
-    }
-
-    isSignedIn.value = true
-    error.value = null
-
-    // Save user profile to localStorage
-    persistAuthState()
-
-    // Now request Drive API access token with explicit prompt
-    if (tokenClient) {
-      console.log('Requesting access token for Drive API')
-      tokenClient.requestAccessToken({ prompt: 'consent' })
-    }
-  } catch (err) {
-    console.error('Error handling credential response:', err)
-    error.value = 'Failed to process sign-in'
-    isSignedIn.value = false
-    userProfile.value = null
-  }
-}
-
-/**
  * Handle OAuth token response
  */
-function handleTokenResponse(response: any) {
+async function handleTokenResponse(response: any) {
   console.log('Token response received:', {
     hasAccessToken: !!response.access_token,
     hasError: !!response.error,
@@ -226,10 +237,32 @@ function handleTokenResponse(response: any) {
 
   if (response.access_token) {
     accessToken.value = response.access_token
-    error.value = null
     console.log('Successfully obtained access token for Drive API')
 
-    // Save token to localStorage
+    const tokenHasDriveScope = await validateAccessTokenScopes(response.access_token)
+    if (!tokenHasDriveScope) {
+      console.warn('Drive scope is missing from the access token')
+      clearAccessTokenOnly()
+
+      if (!scopeRetryAttempted) {
+        scopeRetryAttempted = true
+        error.value = null
+        await requestAccessTokenFlow(true)
+        return
+      }
+
+      error.value = 'Google authorization did not include Drive access. Please try again.'
+      return
+    }
+
+    scopeRetryAttempted = false
+
+    userProfile.value = null
+
+    isSignedIn.value = true
+    error.value = null
+
+    // Save token/profile to localStorage
     persistAuthState()
   } else {
     console.warn('Token response received but no access_token found', response)
@@ -238,47 +271,28 @@ function handleTokenResponse(response: any) {
 }
 
 /**
- * Decode JWT token (basic decode without verification)
+ * Sign in with Google
+ * This now triggers the single OAuth consent flow for both identity and Drive access.
  */
-function decodeToken(token: string) {
-  try {
-    const base64Url = token.split('.')[1]
-    if (!base64Url) {
-      throw new Error('Invalid token format')
-    }
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    )
-    return JSON.parse(jsonPayload)
-  } catch (err) {
-    console.error('Error decoding token:', err)
-    throw err
+async function requestAccessTokenFlow(forceAccountSelection = false): Promise<void> {
+  if (!isInitialized.value) {
+    await initializeGIS()
   }
+
+  if (!tokenClient) {
+    error.value = 'Google authorization is not ready'
+    return
+  }
+
+  tokenClient.requestAccessToken({
+    prompt: forceAccountSelection ? 'consent select_account' : 'consent',
+    scope: SCOPES.join(' '),
+  })
 }
 
-/**
- * Sign in with Google
- * Now handled by Google's renderButton(), but kept for manual sign-in if needed
- */
 async function signIn() {
   console.log('Manual sign-in triggered')
-  // This is now handled by Google's renderButton in Header component
-  // But can be called manually if needed
-}
-
-/**
- * Handle Google Sign-In prompt completion
- * Called after user completes sign-in flow
- */
-function handleSignInCompletion() {
-  if (isSignedIn.value && userProfile.value && tokenClient) {
-    console.log('Sign-in completed, requesting access token...')
-    tokenClient.requestAccessToken({ prompt: 'consent' })
-  }
+  await requestAccessTokenFlow()
 }
 
 /**
@@ -310,14 +324,17 @@ async function refreshAccessToken(): Promise<boolean> {
 function signOut() {
   try {
     const googleApi = (window as Window & { google?: any }).google
-    if (googleApi?.accounts?.id) {
-      google.accounts.id.disableAutoSelect()
+    if (googleApi?.accounts?.oauth2?.revoke && accessToken.value) {
+      googleApi.accounts.oauth2.revoke(accessToken.value, () => {
+        console.log('Access token revoked')
+      })
     }
 
     isSignedIn.value = false
     accessToken.value = null
     userProfile.value = null
     error.value = null
+    scopeRetryAttempted = false
 
     // Clear persisted auth state
     localStorage.removeItem(STORAGE_KEY_TOKEN)
@@ -358,6 +375,6 @@ export function useGoogleDriveAuth() {
     refreshAccessToken,
     checkSignInStatus,
     initializeGIS,
-    requestAccessToken: () => tokenClient?.requestAccessToken({ prompt: 'consent' }),
+    requestAccessToken: requestAccessTokenFlow,
   }
 }
