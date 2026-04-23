@@ -1,9 +1,12 @@
 {
   "app": {
-    "tabTitle": "Eureka Collection"
+    "tabTitle": "Eureka Collection Tracker",
+    "description": "A collection tracker for Infinity Nikki Eureka sets. Filter by rarity, area, and completion status, then sync your saves to Google Drive appdata after sign-in.",
+    "unofficialDisclaimer": "This is an unofficial tool and is not affiliated with Infinity Nikki or Infold Games.",
+    "privacyPolicy": "Privacy Policy"
   },
   "header": {
-    "title": "Eureka Collection Progress",
+    "title": "Eureka Collection",
     "progress": "Collected"
   },
   "filter": {
