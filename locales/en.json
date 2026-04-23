@@ -6,7 +6,9 @@
   "filter": {
     "all": "All",
     "hideCompleted": "Hide Completed",
-    "rarity": "Rarity"
+    "name": "Name",
+    "rarity": "Rarity",
+    "searchByName": "Search by name..."
   },
   "table": {
     "eureka": "Eureka",

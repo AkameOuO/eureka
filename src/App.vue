@@ -35,6 +35,7 @@ const data = ref<EurekasData | null>(null)
 const selectedArea = ref<string>('all')
 const visibleRarities = computed(() => settings.value.visibleRarities)
 const hideCompleted = computed(() => settings.value.hideCompleted)
+const searchName = ref<string>('')
 
 onMounted(async () => {
   try {
@@ -82,6 +83,16 @@ const filteredEurekas = computed(() => {
       }
     }
 
+    // 名稱搜尋
+    if (searchName.value.trim()) {
+      const searchLower = searchName.value.toLowerCase().trim()
+      const enName = eureka.name.en?.toLowerCase() || ''
+      const zhName = eureka.name.zh_tw?.toLowerCase() || ''
+      if (!enName.includes(searchLower) && !zhName.includes(searchLower)) {
+        return false
+      }
+    }
+
     return true
   })
 })
@@ -105,11 +116,14 @@ function handleAreaChange(area: string): void {
   selectedArea.value = area
 }
 
-function handleFilterChange(rarities: number[], completed: boolean): void {
+function handleFilterChange(rarities: number[], completed: boolean, name?: string): void {
   updateSettings({
     visibleRarities: rarities,
     hideCompleted: completed
   })
+  if (name !== undefined) {
+    searchName.value = name
+  }
 }
 
 function handleLocaleChange(newLocale: string): void {
@@ -156,6 +170,7 @@ function handleDataChanged(): void {
         <FilterBar
           :visible-rarities="visibleRarities"
           :hide-completed="hideCompleted"
+          :search-name="searchName"
           @filter-change="handleFilterChange"
           @data-changed="handleDataChanged"
           @open-record-modal="isSyncModalOpen = true"

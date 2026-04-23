@@ -5,10 +5,11 @@ import { useI18n } from 'vue-i18n'
 interface Props {
   visibleRarities: number[]
   hideCompleted: boolean
+  searchName?: string
 }
 
 interface Emits {
-  (e: 'filter-change', rarities: number[], completed: boolean): void
+  (e: 'filter-change', rarities: number[], completed: boolean, name?: string): void
   (e: 'data-changed'): void
   (e: 'open-record-modal'): void
 }
@@ -19,6 +20,7 @@ const { t } = useI18n()
 
 const rarities = ref<number[]>([3, 4, 5])
 const hideCompleted = ref<boolean>(false)
+const searchName = ref<string>('')
 
 watch(
   () => props.visibleRarities,
@@ -34,8 +36,17 @@ watch(
   }
 )
 
+watch(
+  () => props.searchName,
+  (newVal) => {
+    if (newVal !== undefined) {
+      searchName.value = newVal
+    }
+  }
+)
+
 function updateFilters(): void {
-  emit('filter-change', rarities.value, hideCompleted.value)
+  emit('filter-change', rarities.value, hideCompleted.value, searchName.value)
 }
 
 function toggleRarity(rarity: number): void {
@@ -61,6 +72,18 @@ function openRecordModal(): void {
 
 <template>
   <div class="filter-bar">
+    <!-- Search by Name -->
+    <div class="filter-section">
+      <h3 class="filter-title">{{ t('filter.name') }}</h3>
+      <input
+        v-model="searchName"
+        type="text"
+        :placeholder="t('filter.searchByName')"
+        @input="updateFilters"
+        class="search-input"
+      />
+    </div>
+
     <!-- Rarity Filter -->
     <div class="filter-section">
       <h3 class="filter-title">{{ t('filter.rarity') }}</h3>
@@ -102,7 +125,7 @@ function openRecordModal(): void {
 .filter-bar {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
   padding: 20px;
   background: var(--color-bg-default);
   border-radius: 0;
@@ -110,10 +133,15 @@ function openRecordModal(): void {
   margin: 0;
 }
 
+.filter-bar > .filter-section:first-child {
+  margin-bottom: 10px;
+}
+
 .filter-section {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
 }
 
 .filter-title {
@@ -193,17 +221,43 @@ function openRecordModal(): void {
   border-color: var(--color-primary-dark);
 }
 
+.search-input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-bg-default);
+  color: var(--color-text-primary);
+  border-radius: var(--border-radius);
+  font-size: 13px;
+  transition: all var(--transition-speed);
+}
+
+.search-input:hover {
+  border-color: var(--color-text-tertiary);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
 @media (max-width: 768px) {
   .filter-bar {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 15px;
+    gap: 12px;
     padding: 15px;
   }
 
   .filter-section {
     flex: 1;
-    min-width: 150px;
+    min-width: 100%;
   }
 
   .button-group {

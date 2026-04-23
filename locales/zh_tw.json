@@ -6,7 +6,9 @@
   "filter": {
     "all": "全部",
     "hideCompleted": "隱藏已完成",
-    "rarity": "稀有度"
+    "name": "名稱",
+    "rarity": "稀有度",
+    "searchByName": "按名稱搜尋..."
   },
   "table": {
     "eureka": "祝福閃光",
@@ -74,9 +76,9 @@
     "conflict_message": "本地版本與雲端版本不一致，請選擇要保留的版本",
     "conflict_explanation": "檔案 '{file}' 在本地和遠端都有修改。請選擇要保留哪個版本。",
     "keep_local": "保留本地版本",
-    "keep_local_desc": "使用本地集合，覆蓋遠端版本",
+    "keep_local_desc": "使用本地紀錄，覆蓋雲端版本",
     "keep_remote": "保留遠端版本",
-    "keep_remote_desc": "使用遠端集合，覆蓋本地版本",
+    "keep_remote_desc": "使用雲端紀錄，覆蓋本地版本",
     "local_version": "本地版本",
     "remote_version": "遠端版本",
     "items": "項目數",
@@ -96,7 +98,7 @@
     "need_permission": "需要授予權限",
     "initializing": "初始化中",
     "request_permission": "請求權限",
-    "download_success": "成功下載並應用到本地集合",
+    "download_success": "成功下載並應用到本地",
     "upload_success": "成功上傳到 Google Drive",
     "overwrite_success": "成功覆蓋存檔",
     "signed_out": "已登出",
