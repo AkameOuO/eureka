@@ -1,4 +1,7 @@
 {
+  "app": {
+    "tabTitle": "祝福閃光收集"
+  },
   "header": {
     "title": "祝福閃光收集進度表",
     "progress": "已收集"

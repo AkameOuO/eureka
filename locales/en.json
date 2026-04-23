@@ -1,4 +1,7 @@
 {
+  "app": {
+    "tabTitle": "Eureka Collection"
+  },
   "header": {
     "title": "Eureka Collection Progress",
     "progress": "Collected"

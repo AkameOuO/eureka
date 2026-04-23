@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { EurekasData } from './types'
 import { useCollection } from './composables/useCollection'
@@ -36,6 +36,14 @@ const selectedArea = ref<string>('all')
 const visibleRarities = computed(() => settings.value.visibleRarities)
 const hideCompleted = computed(() => settings.value.hideCompleted)
 const searchName = ref<string>('')
+
+watch(
+  () => locale.value,
+  () => {
+    document.title = t('app.tabTitle')
+  },
+  { immediate: true }
+)
 
 onMounted(async () => {
   try {
