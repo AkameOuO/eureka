@@ -216,7 +216,7 @@ function handleDataChanged(): void {
   display: flex;
   flex: 1;
   gap: 0;
-  padding: 0 10%;
+  padding: 0 15%;
 }
 
 .sidebar {

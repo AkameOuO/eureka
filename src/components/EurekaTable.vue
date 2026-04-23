@@ -42,13 +42,6 @@ function getEurekaName(eureka: Eureka): string {
   return locale.value === 'zh_tw' ? eureka.name.zh_tw : eureka.name.en
 }
 
-function getSourceText(eureka: Eureka): string {
-  if (typeof eureka.source === 'string') {
-    return eureka.source
-  }
-  return locale.value === 'zh_tw' ? eureka.source.zh_tw : eureka.source.en
-}
-
 function getCollectedCount(eureka: Eureka): number {
   if (!props.collection || !Array.isArray(props.collection)) return 0
   let count = 0
@@ -89,7 +82,6 @@ function getColorBackground(colorStyle: Record<string, any>): string {
           <th rowspan="2">{{ t('table.eureka') }}</th>
           <th rowspan="2">{{ t('table.color') }}</th>
           <th colspan="3">{{ t('table.slot') }}</th>
-          <th rowspan="2">{{ t('table.source') }}</th>
         </tr>
         <tr>
           <th>{{ getSlotName('head') }}</th>
@@ -136,10 +128,6 @@ function getColorBackground(colorStyle: Record<string, any>): string {
               </label>
             </td>
 
-            <!-- 取得方法列（仅第一个颜色行显示） -->
-            <td v-if="colorIndex === 0" class="source-cell" :rowspan="eureka.colors.length">
-              {{ getSourceText(eureka) }}
-            </td>
           </tr>
         </template>
       </tbody>
@@ -275,13 +263,6 @@ function getColorBackground(colorStyle: Record<string, any>): string {
   width: 18px;
   height: 18px;
   accent-color: #E91E63;
-}
-
-/* 取得方法列 */
-.source-cell {
-  min-width: 150px;
-  color: #555;
-  vertical-align: middle;
 }
 
 .no-data {
