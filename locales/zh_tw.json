@@ -1,7 +1,7 @@
 {
   "app": {
     "tabTitle": "祝福閃光小幫手",
-    "description": "這是無限暖暖（Infinity Nikki）祝福閃光收集工具；你可以篩選稀有度、區域與完成狀態來追蹤進度，登入後可將存檔同步到 Google Drive appdata。",
+    "description": "這是適用於無限暖暖的祝福閃光收集工具，可協助你追蹤進度，並在登入後將存檔同步到 Google Drive。",
     "unofficialDisclaimer": "本工具為非官方應用，與無限暖暖及 Infold Games 無隸屬關係。",
     "privacyPolicy": "隱私權政策"
   },

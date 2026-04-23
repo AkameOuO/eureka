@@ -11,7 +11,6 @@ interface Props {
 interface Emits {
   (e: 'filter-change', rarities: number[], completed: boolean, name?: string): void
   (e: 'data-changed'): void
-  (e: 'open-record-modal'): void
 }
 
 const props = defineProps<Props>()
@@ -64,10 +63,6 @@ function toggleHideCompleted(): void {
   hideCompleted.value = !hideCompleted.value
   updateFilters()
 }
-
-function openRecordModal(): void {
-  emit('open-record-modal')
-}
 </script>
 
 <template>
@@ -112,12 +107,6 @@ function openRecordModal(): void {
       </label>
     </div>
 
-    <!-- Record Manager Button -->
-    <div class="filter-section">
-      <button @click="openRecordModal" class="btn-export">
-        {{ t('googleDrive.record_manager') }}
-      </button>
-    </div>
   </div>
 </template>
 
@@ -198,27 +187,6 @@ function openRecordModal(): void {
   accent-color: var(--color-text-primary);
   width: 16px;
   height: 16px;
-}
-
-.btn-export,
-.btn-import {
-  padding: 8px 12px;
-  border: 1px solid var(--color-primary);
-  background: var(--color-primary);
-  color: var(--color-bg-default);
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  transition: all var(--transition-speed);
-  font-size: 13px;
-  font-weight: 400;
-  width: 100%;
-  text-align: center;
-}
-
-.btn-export:hover,
-.btn-import:hover {
-  background: var(--color-primary-dark);
-  border-color: var(--color-primary-dark);
 }
 
 .search-input {

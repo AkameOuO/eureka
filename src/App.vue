@@ -11,6 +11,8 @@ import FilterBar from './components/FilterBar.vue'
 import AreaTabs from './components/AreaTabs.vue'
 import Header from './components/Header.vue'
 import ProgressBar from './components/ProgressBar.vue'
+import SyncActionButton from './components/SyncActionButton.vue'
+import AppFooter from './components/AppFooter.vue'
 import ToastContainer from './components/ToastContainer.vue'
 import SyncModal from './components/SyncModal.vue'
 import ConflictDialog from './components/ConflictDialog.vue'
@@ -175,13 +177,13 @@ function handleDataChanged(): void {
           :collected="totalProgress.collected"
           :total="totalProgress.total"
         />
+        <SyncActionButton @open-sync="isSyncModalOpen = true" />
         <FilterBar
           :visible-rarities="visibleRarities"
           :hide-completed="hideCompleted"
           :search-name="searchName"
           @filter-change="handleFilterChange"
           @data-changed="handleDataChanged"
-          @open-record-modal="isSyncModalOpen = true"
         />
       </aside>
 
@@ -207,19 +209,7 @@ function handleDataChanged(): void {
       </main>
     </div>
 
-    <footer class="app-footer">
-      <div class="app-footer__content">
-        <p class="app-footer__text">
-          <strong>{{ t('header.title') }}</strong>
-          <span>{{ t('app.description') }}</span>
-        </p>
-        <p class="app-footer__disclaimer">{{ t('app.unofficialDisclaimer') }}</p>
-        <p class="app-footer__copyright">© 2026 AkameOuO</p>
-      </div>
-      <a class="app-footer__link" href="/privacy-policy.html" target="_blank" rel="noopener noreferrer">
-        {{ t('app.privacyPolicy') }}
-      </a>
-    </footer>
+    <AppFooter />
   </div>
 </template>
 
@@ -234,77 +224,12 @@ function handleDataChanged(): void {
   flex-direction: column;
 }
 
-.app-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: auto;
-  padding: 14px 15%;
-  border-top: 1px solid #f2d7e3;
-  background: #fffafc;
-  color: #5f5560;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.app-footer__content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.app-footer__text {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 8px;
-}
-
-.app-footer__copyright {
-  margin: 0;
-  color: #766a73;
-}
-
-.app-footer__disclaimer {
-  margin: 0;
-  color: #8a7d86;
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-.app-footer__text span {
-  white-space: normal;
-}
-
-.app-footer__text strong {
-  color: #8f1241;
-}
-
-.app-footer__link {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 7px 11px;
-  border-radius: 999px;
-  border: 1px solid #f2d7e3;
-  background: #fff;
-  color: #c2185b;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.app-footer__link:hover {
-  background: #fff0f6;
-}
-
 .content-wrapper {
   display: flex;
   flex: 1;
   gap: 0;
   padding: 0 15%;
+  margin-bottom: 16px;
 }
 
 .sidebar {
@@ -329,24 +254,10 @@ function handleDataChanged(): void {
 }
 
 @media (max-width: 768px) {
-  .app-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 14px 15px;
-  }
-
-  .app-footer__text {
-    font-size: 11px;
-  }
-
-  .app-footer__content {
-    width: 100%;
-  }
-
   .content-wrapper {
     flex-direction: column;
     padding: 0;
-
+    margin-bottom: 12px;
   }
 
   .sidebar {

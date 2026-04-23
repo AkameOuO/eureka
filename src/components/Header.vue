@@ -17,11 +17,6 @@ function changeLocale(newLocale: string): void {
   emit('locale-change', newLocale)
   isDropdownOpen.value = false
 }
-
-function getLocaleLabel(): string {
-  const currentLang = languages.find(lang => lang.code === locale.value)
-  return currentLang?.nativeName || locale.value
-}
 </script>
 
 <template>
@@ -37,8 +32,15 @@ function getLocaleLabel(): string {
         <button
           class="dropdown-toggle"
           @click="isDropdownOpen = !isDropdownOpen"
+          aria-label="Change language"
+          title="Change language"
         >
-          {{ getLocaleLabel() }}
+          <svg class="globe-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+            <path d="M3 12h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            <path d="M12 3c2.8 2.4 4.2 5.4 4.2 9S14.8 18.6 12 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            <path d="M12 3c-2.8 2.4-4.2 5.4-4.2 9S9.2 18.6 12 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
           <span class="arrow" :class="{ open: isDropdownOpen }">▼</span>
         </button>
         <div v-if="isDropdownOpen" class="dropdown-menu">
@@ -98,10 +100,10 @@ function getLocaleLabel(): string {
 }
 
 .dropdown-toggle {
-  padding: 10px 16px;
-  background: white;
-  border: 2px solid #E91E63;
-  border-radius: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   cursor: pointer;
   font-weight: 600;
   color: #C2185B;
@@ -112,13 +114,18 @@ function getLocaleLabel(): string {
   font-size: 14px;
 }
 
+.globe-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
 .dropdown-toggle:hover {
-  background: #FCE4EC;
-  border-color: #C2185B;
+  color: #8B1A62;
 }
 
 .dropdown-toggle:active {
-  background: #F8BBD0;
+  color: #6f124f;
 }
 
 .arrow {
