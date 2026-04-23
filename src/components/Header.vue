@@ -27,6 +27,7 @@ function getLocaleLabel(): string {
 <template>
   <header class="header">
     <div class="header-left">
+      <img src="/favicon.svg" alt="logo" class="header-icon" />
       <h1>{{ t('header.title') }}</h1>
     </div>
 
@@ -65,6 +66,18 @@ function getLocaleLabel(): string {
   padding: 20px;
   background: linear-gradient(135deg, #FFB6D9 0%, #FFC0CB 100%);
   box-shadow: 0 2px 8px rgba(233, 30, 99, 0.15);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .header-left h1 {
