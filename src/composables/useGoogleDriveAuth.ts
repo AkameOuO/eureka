@@ -337,7 +337,7 @@ async function requestAccessTokenFlow(forceAccountSelection = false, silent = fa
   isSilentRefreshRequest = silent
 
   tokenClient.requestAccessToken({
-    prompt: silent ? '' : forceAccountSelection ? 'consent select_account' : 'consent',
+    prompt: silent ? 'none' : forceAccountSelection ? 'consent select_account' : 'consent',
     scope: SCOPES.join(' '),
   })
 }
