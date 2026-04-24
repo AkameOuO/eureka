@@ -57,6 +57,9 @@ function selectArea(key: string): void {
 
 <style scoped>
 .area-tabs-container {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   background: white;
   border-bottom: 1px solid #eee;
   padding: 0;
