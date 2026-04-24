@@ -90,6 +90,8 @@
     "items": "Items",
     "more_items": "more items",
     "choose_action": "Choose Action",
+    "confirm_apply": "Apply save '{name}'? Your current local data will be replaced.",
+    "confirm_overwrite": "Overwrite save '{name}' with your current data?",
     "confirm_delete": "Are you sure you want to delete save '{name}'?",
     "cancel": "Cancel",
     "confirm": "Confirm",

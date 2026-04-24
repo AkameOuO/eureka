@@ -90,6 +90,8 @@
     "items": "項目數",
     "more_items": "更多項目",
     "choose_action": "選擇操作",
+    "confirm_apply": "確定套用存檔 '{name}'？目前本地資料將被取代。",
+    "confirm_overwrite": "確定用目前資料覆蓋存檔 '{name}'？",
     "confirm_delete": "確定刪除存檔 '{name}'？",
     "cancel": "取消",
     "confirm": "確認",

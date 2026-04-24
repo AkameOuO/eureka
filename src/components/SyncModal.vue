@@ -29,39 +29,6 @@
 
         <!-- Sync Tab -->
         <div v-if="activeTab === 'sync'" class="tab-content">
-        <!-- Auth Section -->
-        <section class="auth-section">
-          <h3>{{ t('googleDrive.authentication') }}</h3>
-
-          <div v-if="!accessToken" class="auth-status not-signed-in">
-            <div class="status-icon">⚠</div>
-            <div class="status-text">{{ t('googleDrive.not_signed_in') }}</div>
-            <div class="status-hint">{{ t('googleDrive.sign_in_drive_required') }}</div>
-            <button @click="handleRequestPermission" class="btn btn-primary">
-              {{ t('googleDrive.sign_in') }}
-            </button>
-          </div>
-
-          <div v-else class="auth-status authorized">
-            <div class="auth-main">
-              <div class="status-icon">✓</div>
-              <div>
-                <div class="status-text">{{ t('googleDrive.authorized') }}</div>
-                <div v-if="userProfile" class="user-info-compact">
-                  <img v-if="userProfile.picture" :src="userProfile.picture" :alt="userProfile.name" class="user-avatar-small" />
-                  <div>
-                    <div class="user-name-small">{{ userProfile.name }}</div>
-                    <div class="user-email-small">{{ userProfile.email }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <button @click="handleSignOut" class="btn btn-secondary btn-small">
-              {{ t('googleDrive.sign_out') }}
-            </button>
-          </div>
-        </section>
-
         <!-- Save Manager Section -->
         <section v-if="isSignedIn && accessToken" class="save-manager-section">
           <h3>{{ t('googleDrive.save_manager') }}</h3>
@@ -159,6 +126,39 @@
             </button>
           </div>
         </section>
+
+        <!-- Auth Section -->
+        <section class="auth-section">
+          <h3>{{ t('googleDrive.authentication') }}</h3>
+
+          <div v-if="!accessToken" class="auth-status not-signed-in">
+            <div class="status-icon">⚠</div>
+            <div class="status-text">{{ t('googleDrive.not_signed_in') }}</div>
+            <div class="status-hint">{{ t('googleDrive.sign_in_drive_required') }}</div>
+            <button @click="handleRequestPermission" class="btn btn-primary">
+              {{ t('googleDrive.sign_in') }}
+            </button>
+          </div>
+
+          <div v-else class="auth-status authorized">
+            <div class="auth-main">
+              <div class="status-icon">✓</div>
+              <div>
+                <div class="status-text">{{ t('googleDrive.authorized') }}</div>
+                <div v-if="userProfile" class="user-info-compact">
+                  <img v-if="userProfile.picture" :src="userProfile.picture" :alt="userProfile.name" class="user-avatar-small" />
+                  <div>
+                    <div class="user-name-small">{{ userProfile.name }}</div>
+                    <div class="user-email-small">{{ userProfile.email }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button @click="handleSignOut" class="btn btn-secondary btn-small">
+              {{ t('googleDrive.sign_out') }}
+            </button>
+          </div>
+        </section>
         </div>
 
         <!-- Import/Export Tab -->
@@ -227,6 +227,17 @@
       </div>
 
       <!-- Modal Footer -->
+      <div v-if="actionConfirmOpen" class="rename-dialog-overlay">
+        <div class="rename-dialog" @click.stop>
+          <h4>{{ t('button.confirm') }}</h4>
+          <p class="action-confirm-message">{{ actionConfirmMessage }}</p>
+          <div class="rename-dialog-actions">
+            <button class="btn btn-secondary" @click="cancelPendingAction">{{ t('button.cancel') }}</button>
+            <button class="btn btn-primary" @click="confirmPendingAction">{{ t('button.confirm') }}</button>
+          </div>
+        </div>
+      </div>
+
       <div v-if="renameDialogOpen" class="rename-dialog-overlay">
         <div class="rename-dialog" @click.stop>
           <h4>{{ t('googleDrive.rename_dialog_title') }}</h4>
@@ -246,9 +257,6 @@
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button @click="closeModal" class="btn btn-secondary">{{ t('googleDrive.close') }}</button>
-      </div>
     </div>
   </div>
 </template>
@@ -286,6 +294,9 @@ const renameDialogOpen = ref(false)
 const renameSourceName = ref('')
 const renameTargetName = ref('')
 const renameInputRef = ref<HTMLInputElement | null>(null)
+const actionConfirmOpen = ref(false)
+const pendingAction = ref<Exclude<SaveAction, 'rename'> | null>(null)
+const pendingSaveName = ref('')
 
 type SaveAction = 'apply' | 'overwrite' | 'rename' | 'delete'
 
@@ -301,6 +312,19 @@ const collectionData = computed(() => {
 const currentSaveItem = computed(() => {
   if (!currentSave.value) return null
   return saves.value.find((save) => save.name === currentSave.value) ?? null
+})
+
+const actionConfirmMessage = computed(() => {
+  if (!pendingAction.value || !pendingSaveName.value) return ''
+
+  switch (pendingAction.value) {
+    case 'apply':
+      return t('googleDrive.confirm_apply', { name: pendingSaveName.value })
+    case 'overwrite':
+      return t('googleDrive.confirm_overwrite', { name: pendingSaveName.value })
+    case 'delete':
+      return t('googleDrive.confirm_delete', { name: pendingSaveName.value })
+  }
 })
 
 watch(renameDialogOpen, async (isOpen) => {
@@ -449,6 +473,41 @@ function cancelRenameSave(): void {
   renameTargetName.value = ''
 }
 
+function openActionConfirm(action: Exclude<SaveAction, 'rename'>, saveName: string): void {
+  pendingAction.value = action
+  pendingSaveName.value = saveName
+  actionConfirmOpen.value = true
+}
+
+function cancelPendingAction(): void {
+  actionConfirmOpen.value = false
+  pendingAction.value = null
+  pendingSaveName.value = ''
+}
+
+function confirmPendingAction(): void {
+  if (!pendingAction.value || !pendingSaveName.value) {
+    cancelPendingAction()
+    return
+  }
+
+  const action = pendingAction.value
+  const saveName = pendingSaveName.value
+  cancelPendingAction()
+
+  switch (action) {
+    case 'apply':
+      void downloadSelectedSave(saveName)
+      break
+    case 'overwrite':
+      void overwriteSave(saveName)
+      break
+    case 'delete':
+      void deleteSelectedSave(saveName)
+      break
+  }
+}
+
 /**
  * Overwrite existing save with current collection
  */
@@ -476,18 +535,21 @@ async function deleteSelectedSave(saveName: string): Promise<void> {
 }
 
 function handleSaveItemAction(action: SaveAction, saveName: string): void {
+  const trimmedName = saveName.trim()
+  if (!trimmedName) return
+
   switch (action) {
     case 'apply':
-      void downloadSelectedSave(saveName)
+      openActionConfirm('apply', trimmedName)
       break
     case 'overwrite':
-      void overwriteSave(saveName)
+      openActionConfirm('overwrite', trimmedName)
       break
     case 'rename':
-      void renameSaveItem(saveName)
+      void renameSaveItem(trimmedName)
       break
     case 'delete':
-      void deleteSelectedSave(saveName)
+      openActionConfirm('delete', trimmedName)
       break
   }
 }
@@ -1042,6 +1104,13 @@ section h3 {
   color: #666;
 }
 
+.action-confirm-message {
+  margin: 0;
+  font-size: 13px;
+  color: #333;
+  line-height: 1.5;
+}
+
 .rename-input {
   width: 100%;
 }
@@ -1174,16 +1243,6 @@ section h3 {
   background: #45a049;
 }
 
-.btn-danger {
-  background: #f44336;
-  color: white;
-  grid-column: span 2;
-}
-
-.btn-danger:hover:not(:disabled) {
-  background: #da190b;
-}
-
 .btn-secondary {
   background: #e0e0e0;
   color: #333;
@@ -1200,15 +1259,6 @@ section h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-/* Modal Footer */
-.modal-footer {
-  padding: 16px 24px;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: flex-end;
-  flex-shrink: 0;
 }
 
 /* Google Button Container */
