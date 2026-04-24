@@ -52,6 +52,8 @@
     "authentication": "Google Sign-In",
     "save_manager": "Save Manager",
     "current_save": "Applied Save",
+    "local_save_updated_at": "Local save last updated: {date}",
+    "local_save_never_saved": "Local save has not been updated yet",
     "unsaved": "Unsaved",
     "available_saves": "Available Saves",
     "select_save": "Select a save...",

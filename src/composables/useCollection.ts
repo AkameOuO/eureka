@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 
 const COLLECTION_KEY = 'eureka-collection'
+const COLLECTION_UPDATED_AT_KEY = 'eureka-collection-updated-at'
 const DEFAULT_COLLECTION: string[] = []
 
 function getCollectionFromStorage(): string[] {
@@ -20,11 +21,23 @@ function getCollectionFromStorage(): string[] {
   }
 }
 
-function saveCollectionToStorage(collection: string[]): void {
+function getCollectionUpdatedAtFromStorage(): string | null {
   try {
+    return localStorage.getItem(COLLECTION_UPDATED_AT_KEY)
+  } catch {
+    return null
+  }
+}
+
+function saveCollectionToStorage(collection: string[]): string | null {
+  try {
+    const updatedAt = new Date().toISOString()
     localStorage.setItem(COLLECTION_KEY, JSON.stringify(collection))
+    localStorage.setItem(COLLECTION_UPDATED_AT_KEY, updatedAt)
+    return updatedAt
   } catch {
     console.error('Failed to save collection')
+    return null
   }
 }
 
@@ -33,17 +46,18 @@ let collectionInstance: ReturnType<typeof createCollection> | null = null
 
 function createCollection() {
   const collection = ref<string[]>(getCollectionFromStorage())
+  const collectionUpdatedAt = ref<string | null>(getCollectionUpdatedAtFromStorage())
 
   const addToCollection = (id: string): void => {
     if (!collection.value.includes(id)) {
       collection.value.push(id)
-      saveCollectionToStorage(collection.value)
+      collectionUpdatedAt.value = saveCollectionToStorage(collection.value)
     }
   }
 
   const removeFromCollection = (id: string): void => {
     collection.value = collection.value.filter(item => item !== id)
-    saveCollectionToStorage(collection.value)
+    collectionUpdatedAt.value = saveCollectionToStorage(collection.value)
   }
 
   const isCollected = (id: string): boolean => {
@@ -69,7 +83,7 @@ function createCollection() {
         throw new Error('Invalid data format')
       }
       collection.value = data.collection
-      saveCollectionToStorage(collection.value)
+      collectionUpdatedAt.value = saveCollectionToStorage(collection.value)
       return true
     } catch {
       return false
@@ -81,7 +95,7 @@ function createCollection() {
     if (!Array.isArray(collection.value)) {
       console.warn('collection.value is not an array, resetting')
       collection.value = []
-      saveCollectionToStorage(collection.value)
+      collectionUpdatedAt.value = saveCollectionToStorage(collection.value)
       return
     }
 
@@ -99,7 +113,7 @@ function createCollection() {
 
     if (cleanedCollection.length !== collection.value.length) {
       collection.value = cleanedCollection
-      saveCollectionToStorage(collection.value)
+      collectionUpdatedAt.value = saveCollectionToStorage(collection.value)
     }
   }
 
@@ -107,10 +121,12 @@ function createCollection() {
 
   const refreshCollection = (): void => {
     collection.value = getCollectionFromStorage()
+    collectionUpdatedAt.value = getCollectionUpdatedAtFromStorage()
   }
 
   return {
     collection,
+    collectionUpdatedAt,
     addToCollection,
     removeFromCollection,
     isCollected,

@@ -52,6 +52,8 @@
     "authentication": "Google 登入",
     "save_manager": "存檔管理",
     "current_save": "應用中存檔",
+    "local_save_updated_at": "本地存檔最後更新時間：{date}",
+    "local_save_never_saved": "本地存檔尚未更新",
     "unsaved": "未保存",
     "available_saves": "可用存檔",
     "select_save": "選擇存檔...",

@@ -176,14 +176,33 @@ function changeLocale(newLocale: string): void {
 
 @media (max-width: 768px) {
   .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .header-left {
+    min-width: 0;
+  }
+
+  .header-left h1 {
+    font-size: 24px;
+    line-height: 1.1;
+  }
+
+  .header-icon {
+    width: 32px;
+    height: 32px;
   }
 
   .header-right {
-    width: 100%;
+    margin-left: auto;
     justify-content: flex-end;
+  }
+
+  .dropdown-toggle {
+    padding: 7px 10px;
+    font-size: 13px;
+    gap: 6px;
   }
 }
 </style>

@@ -58,6 +58,9 @@
                 </div>
               </div>
             </div>
+            <p class="save-updated-at">
+              {{ localSaveUpdatedAtText }}
+            </p>
           </div>
 
           <!-- Available Saves List -->
@@ -270,11 +273,11 @@ import { useCollection } from '@/composables/useCollection'
 import { useToast } from '@/composables/useToast'
 import SaveListItem from '@/components/SaveListItem.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { success: toastSuccess, error: toastError } = useToast()
 const { syncState, syncError, saves, currentSave, conflictData, listSaves, uploadSave, renameSave, downloadSave, deleteSave, resolveConflict, clearError } = useGoogleDriveSync()
 const { isSignedIn, accessToken, userProfile, signOut, requestAccessToken } = useGoogleDriveAuth()
-const { collection, exportData, importData } = useCollection()
+const { collection, collectionUpdatedAt, exportData, importData } = useCollection()
 
 interface Props {
   isOpen: boolean
@@ -307,6 +310,28 @@ const collectionData = computed(() => {
     return []
   }
   return collection.value
+})
+
+const localSaveUpdatedAtText = computed(() => {
+  const updatedAt = collectionUpdatedAt.value
+  if (!updatedAt) {
+    return t('googleDrive.local_save_never_saved')
+  }
+
+  const date = new Date(updatedAt)
+  if (Number.isNaN(date.getTime())) {
+    return t('googleDrive.local_save_never_saved')
+  }
+
+  return t('googleDrive.local_save_updated_at', {
+    date: new Intl.DateTimeFormat(locale.value === 'zh_tw' ? 'zh-TW' : 'en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date)
+  })
 })
 
 const currentSaveItem = computed(() => {
@@ -1126,6 +1151,12 @@ section h3 {
   font-size: 12px;
   line-height: 1.4;
   color: #888;
+}
+
+.save-updated-at {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #666;
 }
 
 /* Saves List Section */
