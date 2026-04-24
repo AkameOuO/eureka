@@ -107,6 +107,7 @@ function selectArea(key: string): void {
 @media (max-width: 768px) {
   .tabs-list {
     overflow-x: auto;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -114,6 +115,7 @@ function selectArea(key: string): void {
     padding: 10px 16px;
     font-size: 13px;
     white-space: nowrap;
+    margin-bottom: 0;
   }
 }
 </style>
