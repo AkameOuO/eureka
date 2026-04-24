@@ -24,6 +24,7 @@ function changeLocale(newLocale: string): void {
     <div class="header-left">
       <img src="/favicon.svg" alt="logo" class="header-icon" />
       <h1>{{ t('header.title') }}</h1>
+      <span class="header-beta">BETA</span>
     </div>
 
     <div class="header-right">
@@ -73,7 +74,7 @@ function changeLocale(newLocale: string): void {
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
 }
 
 .header-icon {
@@ -87,6 +88,17 @@ function changeLocale(newLocale: string): void {
   font-size: 28px;
   color: #C2185B;
   font-weight: 700;
+}
+
+.header-beta {
+  align-self: flex-end;
+  margin-bottom: 3px;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  color: #8B1A62;
+  opacity: 0.9;
 }
 
 .header-right {
@@ -187,6 +199,11 @@ function changeLocale(newLocale: string): void {
   .header-left h1 {
     font-size: 24px;
     line-height: 1.1;
+  }
+
+  .header-beta {
+    font-size: 12px;
+    margin-bottom: 2px;
   }
 
   .header-icon {
