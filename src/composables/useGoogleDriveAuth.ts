@@ -15,6 +15,7 @@ const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata'
 const STORAGE_KEY_TOKEN = 'eureka_google_access_token'
 const STORAGE_KEY_PROFILE = 'eureka_google_profile'
 const STORAGE_KEY_TOKEN_EXPIRY = 'eureka_google_token_expiry'
+const TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000
 
 // State
 const isInitialized = ref(false)
@@ -23,6 +24,7 @@ const accessToken = ref<string | null>(null)
 const userProfile = ref<{ name: string; email: string; picture: string } | null>(null)
 const error = ref<string | null>(null)
 const isLoading = ref(false)
+const tokenExpiryAt = ref<number | null>(null)
 
 // Declare Google global types for better TypeScript support
 declare let google: any
@@ -31,6 +33,29 @@ declare let google: any
 let tokenClient: any = null
 let gisScriptPromise: Promise<void> | null = null
 let scopeRetryAttempted = false
+let refreshTimer: ReturnType<typeof setTimeout> | null = null
+let isSilentRefreshRequest = false
+
+function clearRefreshTimer(): void {
+  if (!refreshTimer) return
+  clearTimeout(refreshTimer)
+  refreshTimer = null
+}
+
+function scheduleTokenRefresh(): void {
+  clearRefreshTimer()
+
+  if (!accessToken.value || !tokenExpiryAt.value) {
+    return
+  }
+
+  const msUntilRefresh = tokenExpiryAt.value - Date.now() - TOKEN_REFRESH_BUFFER_MS
+  const delay = Math.max(msUntilRefresh, 0)
+
+  refreshTimer = setTimeout(() => {
+    void requestAccessTokenFlow(false, true)
+  }, delay)
+}
 
 function loadGoogleIdentityServices(): Promise<void> {
   const googleApi = (window as Window & { google?: any }).google
@@ -81,12 +106,13 @@ function loadGoogleIdentityServices(): Promise<void> {
 /**
  * Load persisted auth state from localStorage
  */
-function loadPersistedAuthState() {
+function loadPersistedAuthState(): { hasValidToken: boolean; hasSavedProfile: boolean } {
   try {
     const savedToken = localStorage.getItem(STORAGE_KEY_TOKEN)
     const savedProfile = localStorage.getItem(STORAGE_KEY_PROFILE)
     const savedExpiry = localStorage.getItem(STORAGE_KEY_TOKEN_EXPIRY)
     let hasValidToken = false
+    let hasSavedProfile = false
 
     // Check if token is still valid (not expired)
     if (savedToken && savedExpiry) {
@@ -95,17 +121,20 @@ function loadPersistedAuthState() {
 
       if (now < expiryTime) {
         accessToken.value = savedToken
+        tokenExpiryAt.value = expiryTime
         hasValidToken = true
         console.log('Restored access token from localStorage')
       } else {
         console.log('Saved token expired, clearing')
         localStorage.removeItem(STORAGE_KEY_TOKEN)
         localStorage.removeItem(STORAGE_KEY_TOKEN_EXPIRY)
+        tokenExpiryAt.value = null
       }
     }
 
     if (savedProfile) {
       userProfile.value = JSON.parse(savedProfile)
+      hasSavedProfile = true
       if (userProfile.value) {
         console.log('Restored user profile from localStorage')
       }
@@ -113,9 +142,13 @@ function loadPersistedAuthState() {
 
     if (hasValidToken) {
       isSignedIn.value = true
+      scheduleTokenRefresh()
     }
+
+    return { hasValidToken, hasSavedProfile }
   } catch (err) {
     console.error('Error loading persisted auth state:', err)
+    return { hasValidToken: false, hasSavedProfile: false }
   }
 }
 
@@ -141,7 +174,9 @@ async function validateAccessTokenScopes(token: string): Promise<boolean> {
 }
 
 function clearAccessTokenOnly(): void {
+  clearRefreshTimer()
   accessToken.value = null
+  tokenExpiryAt.value = null
   isSignedIn.value = false
   userProfile.value = null
 
@@ -157,13 +192,15 @@ function clearAccessTokenOnly(): void {
 /**
  * Save auth state to localStorage
  */
-function persistAuthState() {
+function persistAuthState(expiresInSeconds?: number) {
   try {
     if (accessToken.value) {
       localStorage.setItem(STORAGE_KEY_TOKEN, accessToken.value)
-      // Token expires in about 1 hour (3600 seconds), save expiry time
-      const expiryTime = Date.now() + 3600 * 1000
+      const safeExpiresInSeconds = Math.max(60, expiresInSeconds ?? 3600)
+      const expiryTime = Date.now() + safeExpiresInSeconds * 1000
+      tokenExpiryAt.value = expiryTime
       localStorage.setItem(STORAGE_KEY_TOKEN_EXPIRY, expiryTime.toString())
+      scheduleTokenRefresh()
     }
 
     if (userProfile.value) {
@@ -204,7 +241,7 @@ async function initializeGIS() {
     error.value = null
 
     // Try to restore persisted auth state
-    loadPersistedAuthState()
+    const restoredState = loadPersistedAuthState()
 
     if (accessToken.value) {
       const tokenIsValid = await validateAccessTokenScopes(accessToken.value)
@@ -212,6 +249,9 @@ async function initializeGIS() {
         console.warn('Restored token does not include the Drive scope, clearing cached token')
         clearAccessTokenOnly()
       }
+    } else if (restoredState.hasSavedProfile) {
+      // Attempt a silent token refresh when we have prior sign-in state.
+      void requestAccessTokenFlow(false, true)
     }
   } catch (err) {
     console.error('Error initializing GIS:', err)
@@ -231,11 +271,21 @@ async function handleTokenResponse(response: any) {
 
   if (response.error) {
     console.error('OAuth error:', response.error, response.error_description || '')
+    if (isSilentRefreshRequest) {
+      isSilentRefreshRequest = false
+      // Silent refresh can fail when Google session is unavailable.
+      // Clear expired token state and require interactive sign-in.
+      clearAccessTokenOnly()
+      error.value = null
+      return
+    }
+
     error.value = `OAuth error: ${response.error}`
     return
   }
 
   if (response.access_token) {
+    isSilentRefreshRequest = false
     accessToken.value = response.access_token
     console.log('Successfully obtained access token for Drive API')
 
@@ -263,7 +313,7 @@ async function handleTokenResponse(response: any) {
     error.value = null
 
     // Save token/profile to localStorage
-    persistAuthState()
+    persistAuthState(response.expires_in)
   } else {
     console.warn('Token response received but no access_token found', response)
     error.value = 'Failed to obtain access token'
@@ -274,7 +324,7 @@ async function handleTokenResponse(response: any) {
  * Sign in with Google
  * This now triggers the single OAuth consent flow for both identity and Drive access.
  */
-async function requestAccessTokenFlow(forceAccountSelection = false): Promise<void> {
+async function requestAccessTokenFlow(forceAccountSelection = false, silent = false): Promise<void> {
   if (!isInitialized.value) {
     await initializeGIS()
   }
@@ -284,8 +334,10 @@ async function requestAccessTokenFlow(forceAccountSelection = false): Promise<vo
     return
   }
 
+  isSilentRefreshRequest = silent
+
   tokenClient.requestAccessToken({
-    prompt: forceAccountSelection ? 'consent select_account' : 'consent',
+    prompt: silent ? '' : forceAccountSelection ? 'consent select_account' : 'consent',
     scope: SCOPES.join(' '),
   })
 }
@@ -330,8 +382,10 @@ function signOut() {
       })
     }
 
+    clearRefreshTimer()
     isSignedIn.value = false
     accessToken.value = null
+    tokenExpiryAt.value = null
     userProfile.value = null
     error.value = null
     scopeRetryAttempted = false
