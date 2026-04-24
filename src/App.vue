@@ -247,6 +247,12 @@ function handleDataChanged(): void {
   color: #C2185B;
 }
 
+@media (max-width: 1200px) {
+  .content-wrapper {
+    padding: 0;
+  }
+}
+
 @media (max-width: 768px) {
   .content-wrapper {
     flex-direction: column;
