@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+
+// 根據當前語言決定使用的連結版本
+const privacyPolicyUrl = computed(() => locale.value === 'zh_tw' ? '/privacy-policy.html' : '/privacy-policy-en.html')
+const termsOfServiceUrl = computed(() => locale.value === 'zh_tw' ? '/terms-of-service.html' : '/terms-of-service-en.html')
 </script>
 
 <template>
@@ -14,9 +19,14 @@ const { t } = useI18n()
       <p class="app-footer__disclaimer">{{ t('app.unofficialDisclaimer') }}</p>
       <p class="app-footer__copyright">© 2026 AkameOuO</p>
     </div>
-    <a class="app-footer__link" href="/privacy-policy.html" target="_blank" rel="noopener noreferrer">
-      {{ t('app.privacyPolicy') }}
-    </a>
+    <div class="app-footer__links">
+      <a class="app-footer__link" :href="privacyPolicyUrl" target="_blank" rel="noopener noreferrer">
+        {{ t('app.privacyPolicy') }}
+      </a>
+      <a class="app-footer__link" :href="termsOfServiceUrl" target="_blank" rel="noopener noreferrer">
+        {{ t('app.termsOfService') }}
+      </a>
+    </div>
   </footer>
 </template>
 
@@ -87,6 +97,12 @@ const { t } = useI18n()
   background: #fff0f6;
 }
 
+.app-footer__links {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 @media (max-width: 768px) {
   .app-footer {
     flex-direction: column;
@@ -100,6 +116,11 @@ const { t } = useI18n()
 
   .app-footer__content {
     width: 100%;
+  }
+
+  .app-footer__links {
+    width: 100%;
+    flex-wrap: wrap;
   }
 }
 </style>

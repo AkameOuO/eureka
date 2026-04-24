@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terms of Service for the Eureka collection tracker.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <title>Terms of Service | Eureka Collection</title>
+    <style>
+      :root {
+        --bg: #fff7fb;
+        --card: #ffffff;
+        --text: #1f1f1f;
+        --muted: #666;
+        --primary: #e91e63;
+        --primary-soft: #ffb6d9;
+        --line: #f2d7e3;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Noto Sans", "Noto Sans TC", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 20% 0%, #ffddeb 0%, rgba(255, 221, 235, 0) 40%),
+          radial-gradient(circle at 80% 20%, #ffeaf3 0%, rgba(255, 234, 243, 0) 35%),
+          var(--bg);
+        line-height: 1.7;
+      }
+
+      .container {
+        max-width: 860px;
+        margin: 40px auto;
+        padding: 0 16px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 10px 30px rgba(233, 30, 99, 0.08);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2rem;
+      }
+
+      .updated {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      h2 {
+        margin: 28px 0 10px;
+        font-size: 1.25rem;
+        color: #8f1241;
+      }
+
+      p {
+        margin: 8px 0;
+      }
+
+      ul {
+        margin: 8px 0 8px 20px;
+        padding: 0;
+      }
+
+      li {
+        margin: 4px 0;
+      }
+
+      hr {
+        border: none;
+        border-top: 1px solid var(--line);
+        margin: 22px 0;
+      }
+
+      .lang-switcher {
+        display: inline-block;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.9rem;
+      }
+
+      .lang-switcher a {
+        font-weight: 600;
+      }
+
+      .home-link {
+        display: inline-block;
+        margin-top: 18px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--primary-soft);
+        background: #fff0f6;
+        color: #8f1241;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      @media (max-width: 640px) {
+        .container {
+          margin: 18px auto;
+        }
+
+        .card {
+          padding: 18px;
+          border-radius: 12px;
+        }
+
+        h1 {
+          font-size: 1.6rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <article class="card">
+        <div class="lang-switcher">
+          English | <a href="/terms-of-service.html">繁體中文</a>
+        </div>
+
+        <h1>Terms of Service</h1>
+        <p class="updated">Last updated: April 2026</p>
+
+        <h2>Overview</h2>
+        <p>
+          These Terms of Service ("Terms") govern your use of Eureka Collection ("the App"), a personal game collection
+          tracking tool. By using the App, you agree to these Terms.
+        </p>
+
+        <hr>
+
+        <h2>Use of the App</h2>
+        <ul>
+          <li>The App is provided free of charge for personal, non-commercial use.</li>
+          <li>You are responsible for maintaining the security of your Google account.</li>
+          <li>You agree not to misuse the App or attempt to interfere with its functionality.</li>
+        </ul>
+
+        <hr>
+
+        <h2>Data and Storage</h2>
+        <ul>
+          <li>Your collection data is stored in your own Google Drive using the <code>drive.appdata</code> scope.</li>
+          <li>
+            We do not have access to your data and are not responsible for any data loss resulting from Google Drive service issues,
+            accidental deletion, or revocation of Google account access.
+          </li>
+          <li>You are solely responsible for your own data.</li>
+        </ul>
+
+        <hr>
+
+        <h2>Availability</h2>
+        <ul>
+          <li>The App is provided on an "as is" and "as available" basis.</li>
+          <li>We do not guarantee uninterrupted or error-free operation.</li>
+          <li>We reserve the right to modify, suspend, or discontinue the App at any time without prior notice.</li>
+        </ul>
+
+        <hr>
+
+        <h2>Disclaimer of Warranties</h2>
+        <p>
+          The App is provided without warranties of any kind, either express or implied. We do not warrant that the App will meet
+          your requirements or that it will be free of errors.
+        </p>
+
+        <hr>
+
+        <h2>Limitation of Liability</h2>
+        <p>
+          To the fullest extent permitted by applicable law, we shall not be liable for any indirect, incidental, or consequential
+          damages arising from your use of the App, including but not limited to loss of data.
+        </p>
+
+        <hr>
+
+        <h2>Changes to These Terms</h2>
+        <p>
+          We may update these Terms from time to time. Continued use of the App after changes are posted constitutes your acceptance
+          of the revised Terms.
+        </p>
+
+        <hr>
+
+        <h2>Contact</h2>
+        <p>If you have any questions about these Terms, please contact us at:</p>
+        <p><strong id="contact-email"></strong></p>
+
+        <a class="home-link" href="/">Back to App</a>
+      </article>
+    </main>
+
+    <script>
+      const injectedEmail = '%VITE_CONTACT_EMAIL%'
+      const fallbackEmail = 'your-email@example.com'
+      const resolvedEmail = injectedEmail.startsWith('%VITE_') ? fallbackEmail : injectedEmail
+      document.getElementById('contact-email').textContent = resolvedEmail
+    </script>
+  </body>
+</html>
