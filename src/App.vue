@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { EurekasData } from './types'
+import eurekasData from 'virtual:eurekas-data'
 import { useCollection } from './composables/useCollection'
 import { useSettings } from './composables/useSettings'
 import { useGoogleDriveSync } from './composables/useGoogleDriveSync'
@@ -47,20 +48,13 @@ watch(
   { immediate: true }
 )
 
-onMounted(async () => {
-  try {
-    const response = await fetch('/data/eurekas.json')
-    data.value = await response.json()
+onMounted(() => {
+  data.value = eurekasData as EurekasData
 
-    // 驗證並清理 collection 中的無效項目
-    if (data.value) {
-      const validEurekaIds = new Set(data.value.eurekas.map(e => e.id))
-      const validColors = new Set(Object.keys(data.value.colors))
-      cleanCollection(validEurekaIds, validColors)
-    }
-  } catch (error) {
-    console.error('Failed to load eurekas data:', error)
-  }
+  // 驗證並清理 collection 中的無效項目
+  const validEurekaIds = new Set(data.value.eurekas.map(e => e.id))
+  const validColors = new Set(Object.keys(data.value.colors))
+  cleanCollection(validEurekaIds, validColors)
 })
 
 const filteredEurekas = computed(() => {
