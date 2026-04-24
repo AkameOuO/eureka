@@ -13,15 +13,16 @@
         "pink",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "fairy"
+      ]
     },
     {
       "id": "rayplume",
@@ -36,15 +37,16 @@
         "yellow",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "retro"
+      ]
     },
     {
       "id": "rainbell",
@@ -59,15 +61,16 @@
         "pink",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "pastoral"
+      ]
     },
     {
       "id": "void_hunt",
@@ -82,15 +85,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "adventure"
+      ]
     },
     {
       "id": "afterglow",
@@ -105,15 +109,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "ballroom"
+      ]
     },
     {
       "id": "moonlit_ode",
@@ -128,15 +133,16 @@
         "iridescent",
         "purple"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "fantacy"
+      ]
     },
     {
       "id": "dream_waltz",
@@ -151,15 +157,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "romance"
+      ]
     },
     {
       "id": "misty_waves",
@@ -174,12 +181,13 @@
         "yellow",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": "",
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "ballroom"
+      ]
     },
     {
       "id": "silvermoon",
@@ -190,15 +198,16 @@
       "colors": [
         "white"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 3,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "summer"
+      ]
     },
     {
       "id": "starlight",
@@ -209,15 +218,16 @@
       "colors": [
         "yellow"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 3,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "fashion"
+      ]
     },
     {
       "id": "meteorite",
@@ -228,15 +238,16 @@
       "colors": [
         "red"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 3,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "adventure"
+      ]
     },
     {
       "id": "rosefall",
@@ -247,15 +258,16 @@
       "colors": [
         "purple"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 3,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "romance"
+      ]
     },
     {
       "id": "sweet_candy",
@@ -266,12 +278,13 @@
       "colors": [
         "pink"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 3,
       "source": "",
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "intellectual"
+      ]
     },
     {
       "id": "winds_rhythm",
@@ -284,15 +297,16 @@
         "blue",
         "yellow"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 4,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "cute"
+      ]
     },
     {
       "id": "lullaby",
@@ -305,15 +319,16 @@
         "blue",
         "red"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 4,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "playful"
+      ]
     },
     {
       "id": "melted_snow",
@@ -326,15 +341,16 @@
         "blue",
         "purple"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 4,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "formal"
+      ]
     },
     {
       "id": "masked_magic",
@@ -347,15 +363,16 @@
         "purple",
         "red"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 4,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "trendy"
+      ]
     },
     {
       "id": "heart_kiss",
@@ -368,15 +385,16 @@
         "red",
         "blue"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 4,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "ballroom"
+      ]
     },
     {
       "id": "roseheart",
@@ -391,15 +409,16 @@
         "pink",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "romance"
+      ]
     },
     {
       "id": "wild_blaze",
@@ -414,15 +433,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "trendy"
+      ]
     },
     {
       "id": "flitterfin",
@@ -437,15 +457,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "fairy"
+      ]
     },
     {
       "id": "swaying_lotus",
@@ -460,20 +481,21 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "summer"
+      ]
     },
     {
       "id": "inky_shadow",
       "name": {
-        "en": "WInky Shadow",
+        "en": "Inky Shadow",
         "zh_tw": "墨影"
       },
       "colors": [
@@ -483,20 +505,21 @@
         "purple",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "linglang"
+      ]
     },
     {
       "id": "moon_lotus",
       "name": {
-        "en": "Moon_Lotus",
+        "en": "Moon Lotus",
         "zh_tw": "月連笙"
       },
       "colors": [
@@ -506,12 +529,13 @@
         "yellow",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": "",
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "linglang"
+      ]
     },
     {
       "id": "book_of_life",
@@ -526,20 +550,21 @@
         "yellow",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "fantacy"
+      ]
     },
     {
-      "id": "sunshower",
+      "id": "sunshower_trip",
       "name": {
-        "en": "Sunshower",
+        "en": "Sunshower Trip",
         "zh_tw": "晴雨悠遊"
       },
       "colors": [
@@ -549,15 +574,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "formal"
+      ]
     },
     {
       "id": "moon_laurel_rabbit",
@@ -568,15 +594,16 @@
       "colors": [
         "yellow"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 3,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "wishfield",
-      "tags": []
+      "labels": [
+        "linglang"
+      ]
     },
     {
       "id": "shroomling_lullaby",
@@ -591,15 +618,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "itzaland",
-      "tags": []
+      "labels": [
+        "terra"
+      ]
     },
     {
       "id": "lunar_astrolabe",
@@ -614,15 +642,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "itzaland",
-      "tags": []
+      "labels": [
+        "spirited"
+      ]
     },
     {
       "id": "icy_edge",
@@ -637,15 +666,16 @@
         "yellow",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "itzaland",
-      "tags": []
+      "labels": [
+        "aesthetic"
+      ]
     },
     {
       "id": "oracle_flame",
@@ -660,15 +690,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "itzaland",
-      "tags": []
+      "labels": [
+        "divine"
+      ]
     },
     {
       "id": "essence_of_tears",
@@ -679,15 +710,16 @@
       "colors": [
         "blue"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 3,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "itzaland",
-      "tags": []
+      "labels": [
+        "divine"
+      ]
     },
     {
       "id": "distant_land",
@@ -702,15 +734,16 @@
         "pink",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "itzaland",
-      "tags": []
+      "labels": [
+        "forest"
+      ]
     },
     {
       "id": "mortal_farewell",
@@ -725,15 +758,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "itzaland",
-      "tags": []
+      "labels": [
+        "terra"
+      ]
     },
     {
       "id": "clear_night",
@@ -748,15 +782,16 @@
         "yellow",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "itzaland",
-      "tags": []
+      "labels": [
+        "divine"
+      ]
     },
     {
       "id": "sweetheart_party",
@@ -771,15 +806,16 @@
         "red",
         "iridescent"
       ],
-      "images": [
-      ],
+      "images": [],
       "rarity": 5,
       "source": {
         "en": "",
         "zh_tw": ""
       },
       "area": "itzaland",
-      "tags": []
+      "labels": [
+        "glow"
+      ]
     }
   ],
   "colors": {
@@ -790,7 +826,7 @@
       },
       "style": {
         "background": "linear-gradient(var(--color-gradient-direction), hsl(0, 0%, 90%), hsl(0, 0%, 100%))",
-        "font": "#333333"
+        "text": "#333333"
       }
     },
     "blue": {
@@ -800,7 +836,7 @@
       },
       "style": {
         "hue": 217,
-        "font": "#333333"
+        "text": "#333333"
       }
     },
     "green": {
@@ -810,7 +846,7 @@
       },
       "style": {
         "hue": 135,
-        "font": "#333333"
+        "text": "#333333"
       }
     },
     "red": {
@@ -820,7 +856,7 @@
       },
       "style": {
         "hue": 0,
-        "font": "#333333"
+        "text": "#333333"
       }
     },
     "purple": {
@@ -830,7 +866,7 @@
       },
       "style": {
         "hue": 272,
-        "font": "#333333"
+        "text": "#333333"
       }
     },
     "pink": {
@@ -840,7 +876,7 @@
       },
       "style": {
         "hue": 348,
-        "font": "#333333"
+        "text": "#333333"
       }
     },
     "yellow": {
@@ -850,7 +886,7 @@
       },
       "style": {
         "hue": 48,
-        "font": "#333333"
+        "text": "#333333"
       }
     },
     "iridescent": {
@@ -860,7 +896,7 @@
       },
       "style": {
         "background": "linear-gradient(var(--color-gradient-direction), hsl(348, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 0%, hsl(18, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 25%, hsl(60, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 50%, hsl(114, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 75%, hsl(217, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)) 100%)",
-        "font": "#333333"
+        "text": "#333333"
       }
     }
   },
@@ -872,6 +908,308 @@
     "itzaland": {
       "en": "Itzaland",
       "zh_tw": "伊贊之土"
+    }
+  },
+  "labels": {
+    "warm": {
+      "name": {
+        "zh_tw": "保暖",
+        "en": "Warm"
+      },
+      "colors": {
+        "background": "#EFFBFF",
+        "text": "#79ABBE"
+      }
+    },
+    "summer": {
+      "name": {
+        "zh_tw": "清涼",
+        "en": "Summer"
+      },
+      "colors": {
+        "background": "#FFF1F3",
+        "text": "#F996A4"
+      }
+    },
+    "home": {
+      "name": {
+        "zh_tw": "居家",
+        "en": "Home"
+      },
+      "colors": {
+        "background": "#F5FFEF",
+        "text": "#A6CA84"
+      }
+    },
+    "formal": {
+      "name": {
+        "zh_tw": "禮服",
+        "en": "Formal"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#E9BE72"
+      }
+    },
+    "simple": {
+      "name": {
+        "zh_tw": "簡約",
+        "en": "Simple"
+      },
+      "colors": {
+        "background": "#FFF1EF",
+        "text": "#F9957E"
+      }
+    },
+    "fantasy": {
+      "name": {
+        "zh_tw": "幻想",
+        "en": "Fantasy"
+      },
+      "colors": {
+        "background": "#EFFFF5",
+        "text": "#84CAAF"
+      }
+    },
+    "intellectual": {
+      "name": {
+        "zh_tw": "知性",
+        "en": "Intellectual"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#F5A96D"
+      }
+    },
+    "adventure": {
+      "name": {
+        "zh_tw": "冒險",
+        "en": "Adventure"
+      },
+      "colors": {
+        "background": "#FFF1EF",
+        "text": "#F9957E"
+      }
+    },
+    "romance": {
+      "name": {
+        "zh_tw": "浪漫",
+        "en": "Romance"
+      },
+      "colors": {
+        "background": "#FFF1F3",
+        "text": "#F996A4"
+      }
+    },
+    "retro": {
+      "name": {
+        "zh_tw": "復古",
+        "en": "Retro"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#F5A96D"
+      }
+    },
+    "fashion": {
+      "name": {
+        "zh_tw": "時尚",
+        "en": "Fashion"
+      },
+      "colors": {
+        "background": "#F5FFEF",
+        "text": "#A6CA84"
+      }
+    },
+    "uniform": {
+      "name": {
+        "zh_tw": "制服",
+        "en": "Uniform"
+      },
+      "colors": {
+        "background": "#F1F3FF",
+        "text": "#88A4EF"
+      }
+    },
+    "fairy": {
+      "name": {
+        "zh_tw": "精靈",
+        "en": "Fairy"
+      },
+      "colors": {
+        "background": "#EFFFF5",
+        "text": "#84CAAF"
+      }
+    },
+    "ballroom": {
+      "name": {
+        "zh_tw": "舞會",
+        "en": "Ballroom"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#F5A96D"
+      }
+    },
+    "royal": {
+      "name": {
+        "zh_tw": "宮廷",
+        "en": "Royal"
+      },
+      "colors": {
+        "background": "#FFF1EF",
+        "text": "#F9957E"
+      }
+    },
+    "linlang": {
+      "name": {
+        "zh_tw": "琳瑯",
+        "en": "Linlang"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#E9BE72"
+      }
+    },
+    "pastoral": {
+      "name": {
+        "zh_tw": "田園",
+        "en": "Pastoral"
+      },
+      "colors": {
+        "background": "#F5FFEF",
+        "text": "#A6CA84"
+      }
+    },
+    "playful": {
+      "name": {
+        "zh_tw": "童趣",
+        "en": "Playful"
+      },
+      "colors": {
+        "background": "#F1F3FF",
+        "text": "#88A4EF"
+      }
+    },
+    "trendy": {
+      "name": {
+        "zh_tw": "潮酷",
+        "en": "Trendy"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#F5A96D"
+      }
+    },
+    "cute": {
+      "name": {
+        "zh_tw": "甜心",
+        "en": "Cute"
+      },
+      "colors": {
+        "background": "#FFF1F3",
+        "text": "#F996A4"
+      }
+    },
+    "light": {
+      "name": {
+        "zh_tw": "發光",
+        "en": "Light"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#E9BE72"
+      }
+    },
+    "more_light": {
+      "name": {
+        "zh_tw": "發亮",
+        "en": "More Light"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#E9BE72"
+      }
+    },
+    "divine": {
+      "name": {
+        "zh_tw": "神諭",
+        "en": "Divine"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#F5A96D"
+      }
+    },
+    "forest": {
+      "name": {
+        "zh_tw": "森林",
+        "en": "Forest"
+      },
+      "colors": {
+        "background": "#EFFFF5",
+        "text": "#84CAAF"
+      }
+    },
+    "spirited": {
+      "name": {
+        "zh_tw": "靈動",
+        "en": "Spirited"
+      },
+      "colors": {
+        "background": "#EFFBFF",
+        "text": "#79ABBE"
+      }
+    },
+    "classical": {
+      "name": {
+        "zh_tw": "古典",
+        "en": "Classical"
+      },
+      "colors": {
+        "background": "#FFF1EF",
+        "text": "#F9957E"
+      }
+    },
+    "terra": {
+      "name": {
+        "zh_tw": "大地",
+        "en": "Terra"
+      },
+      "colors": {
+        "background": "#FFF9ED",
+        "text": "#E9BE72"
+      }
+    },
+    "aesthetic": {
+      "name": {
+        "zh_tw": "唯美",
+        "en": "Aesthetic"
+      },
+      "colors": {
+        "background": "#F1F3FF",
+        "text": "#88A4EF"
+      }
+    },
+    "whimsy": {
+      "name": {
+        "zh_tw": "綺想",
+        "en": "Whimsy"
+      },
+      "colors": {
+        "background": "#FFF1F3",
+        "text": "#F996A4"
+      }
+    },
+    "glow": {
+      "name": {
+        "zh_tw": "流彩",
+        "en": "Glow"
+      },
+      "colors": {
+        "background": "#F5FFEF",
+        "text": "#A6CA84"
+      }
     }
   }
 }

@@ -59,13 +59,35 @@ function getTotalCount(eureka: Eureka): number {
   return eureka.colors.length * slots.length
 }
 
+function getRarityStars(rarity: number): string {
+  return '★'.repeat(Math.max(0, rarity))
+}
+
+function getEurekaLabels(eureka: Eureka): Array<{ key: string; name: string; background: string; text: string }> {
+  if (!eureka.labels || eureka.labels.length === 0) return []
+
+  return eureka.labels
+    .map((labelKey) => {
+      const labelDef = props.data.labels?.[labelKey]
+      if (!labelDef) return null
+
+      return {
+        key: labelKey,
+        name: locale.value === 'zh_tw' ? labelDef.name.zh_tw : labelDef.name.en,
+        background: labelDef.colors.background,
+        text: labelDef.colors.text,
+      }
+    })
+    .filter((label): label is { key: string; name: string; background: string; text: string } => label !== null)
+}
+
 function getColorBackground(colorStyle: Record<string, any>): string {
-  // 如果已提供 background，直接使用
+  // Use provided background directly when available.
   if (colorStyle.background) {
     return colorStyle.background
   }
 
-  // 如果提供 hue，動態生成漸層背景，使用 CSS 變數直接在字串內
+  // Generate a gradient from hue and CSS variables.
   if (colorStyle.hue !== undefined) {
     return `linear-gradient(var(--color-gradient-direction), hsl(${colorStyle.hue}, var(--color-gradient-saturation-top), var(--color-gradient-lightness-top)), hsl(${colorStyle.hue}, var(--color-gradient-saturation-bottom), var(--color-gradient-lightness-bottom)))`
   }
@@ -92,19 +114,22 @@ function getColorBackground(colorStyle: Record<string, any>): string {
       <tbody>
         <template v-for="(eureka, eurekaIndex) in eurekas" :key="eureka.id">
           <tr v-for="(color, colorIndex) in eureka.colors" :key="`${eureka.id}-${color}`" :class="{ 'eureka-divider': colorIndex === 0 }">
-            <!-- 装备信息列（仅第一个颜色行显示） -->
+            <!-- Equipment info column (shown only on the first color row). -->
             <td v-if="colorIndex === 0" class="eureka-cell" :rowspan="eureka.colors.length">
               <div class="eureka-info">
                 <div class="eureka-name">{{ getEurekaName(eureka) }}</div>
-                <div class="eureka-images">
-                  <img
-                    v-for="img in eureka.images"
-                    :key="img"
-                    :src="`/data/${img}`"
-                    :alt="getEurekaName(eureka)"
-                    class="eureka-image"
-                    @error="(e) => { (e.target as HTMLImageElement).style.display = 'none' }"
-                  />
+                <div class="eureka-meta">
+                  <span class="eureka-rarity">{{ getRarityStars(eureka.rarity) }}</span>
+                  <div v-if="getEurekaLabels(eureka).length > 0" class="eureka-labels">
+                    <span
+                      v-for="label in getEurekaLabels(eureka)"
+                      :key="label.key"
+                      class="eureka-label"
+                      :style="{ background: label.background, color: label.text, borderColor: label.text }"
+                    >
+                      {{ label.name }}
+                    </span>
+                  </div>
                 </div>
                 <div class="eureka-progress">
                   {{ t('header.progress') }} {{ getCollectedCount(eureka) }} / {{ getTotalCount(eureka) }}
@@ -112,12 +137,12 @@ function getColorBackground(colorStyle: Record<string, any>): string {
               </div>
             </td>
 
-            <!-- 颜色列 -->
-            <td v-if="data.colors[color]" class="color-cell" :style="{ background: getColorBackground(data.colors[color].style), color: data.colors[color].style.font }">
+            <!-- Color column -->
+            <td v-if="data.colors[color]" class="color-cell" :style="{ background: getColorBackground(data.colors[color].style), color: data.colors[color].style.text }">
               {{ getColorName(color, data) }}
             </td>
 
-            <!-- 部位 checkbox 列（頭、手、脚） -->
+            <!-- Slot checkbox column (head, hand, foot) -->
             <td class="slot-cell" v-for="slot in slots" :key="`${eureka.id}-${color}-${slot}`">
               <label class="checkbox-label">
                 <input
@@ -215,6 +240,37 @@ function getColorBackground(colorStyle: Record<string, any>): string {
   color: #333;
 }
 
+.eureka-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.eureka-rarity {
+  color: #f5b301;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.eureka-labels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.eureka-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
 .eureka-images {
   display: flex;
   gap: 6px;
@@ -273,11 +329,6 @@ function getColorBackground(colorStyle: Record<string, any>): string {
 }
 
 @media (max-width: 768px) {
-  .eureka-image {
-    width: 40px;
-    height: 40px;
-  }
-
   .eureka-table th,
   .eureka-table td {
     padding: 8px;
@@ -290,6 +341,15 @@ function getColorBackground(colorStyle: Record<string, any>): string {
 
   .eureka-name {
     font-size: 13px;
+  }
+
+  .eureka-rarity {
+    font-size: 12px;
+  }
+
+  .eureka-label {
+    font-size: 10px;
+    padding: 2px 6px;
   }
 }
 </style>
