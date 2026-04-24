@@ -734,6 +734,52 @@
       },
       "area": "itzaland",
       "tags": []
+    },
+    {
+      "id": "clear_night",
+      "name": {
+        "en": "Clear Night",
+        "zh_tw": "祈晴夜"
+      },
+      "colors": [
+        "blue",
+        "green",
+        "pink",
+        "yellow",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "itzaland",
+      "tags": []
+    },
+    {
+      "id": "sweetheart_party",
+      "name": {
+        "en": "Sweetheart Party",
+        "zh_tw": "甜心派對"
+      },
+      "colors": [
+        "green",
+        "pink",
+        "yellow",
+        "red",
+        "iridescent"
+      ],
+      "images": [
+      ],
+      "rarity": 5,
+      "source": {
+        "en": "",
+        "zh_tw": ""
+      },
+      "area": "itzaland",
+      "tags": []
     }
   ],
   "colors": {
