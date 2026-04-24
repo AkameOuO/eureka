@@ -78,47 +78,13 @@
               <label class="save-block-label">{{ t('googleDrive.current_save') }}:</label>
             </div>
             <div class="save-block-content current-save-display">
-              <div v-if="currentSaveItem" class="current-save-item">
-                <div class="save-info">
-                  <div class="save-name">{{ currentSaveItem.name }}</div>
-                  <div class="save-date">{{ formatDate(currentSaveItem.modifiedTime) }}</div>
-                </div>
-
-                <div class="current-save-actions">
-                  <button
-                    @click="downloadSelectedSave(currentSaveItem.name)"
-                    :disabled="syncState === 'syncing'"
-                    class="action-btn apply-btn"
-                    :title="t('googleDrive.apply_save')"
-                  >
-                    {{ t('googleDrive.apply') }}
-                  </button>
-                  <button
-                    @click="overwriteSave(currentSaveItem.name)"
-                    :disabled="syncState === 'syncing'"
-                    class="action-btn overwrite-btn"
-                    :title="t('googleDrive.overwrite_save')"
-                  >
-                    {{ t('googleDrive.overwrite') }}
-                  </button>
-                  <button
-                    @click="renameSaveItem(currentSaveItem.name)"
-                    :disabled="syncState === 'syncing'"
-                    class="action-btn rename-btn"
-                    :title="t('googleDrive.rename_save')"
-                  >
-                    {{ t('googleDrive.rename') }}
-                  </button>
-                  <button
-                    @click="deleteSelectedSave(currentSaveItem.name)"
-                    :disabled="syncState === 'syncing'"
-                    class="action-btn delete-btn"
-                    :title="t('googleDrive.delete')"
-                  >
-                    {{ t('googleDrive.delete') }}
-                  </button>
-                </div>
-              </div>
+              <SaveListItem
+                v-if="currentSaveItem"
+                :save="currentSaveItem"
+                :formatted-date="formatDate(currentSaveItem.modifiedTime)"
+                :disabled="syncState === 'syncing'"
+                @action="handleSaveItemAction"
+              />
               <div v-else class="current-save-empty">
                 <div class="current-save-empty-title">
                   {{ t('googleDrive.no_applied_save') }}
@@ -145,46 +111,14 @@
               <div v-if="saves.length === 0" class="no-saves">
                 {{ t('googleDrive.no_saves_yet') }}
               </div>
-              <div v-for="save in saves" :key="save.id" class="save-item">
-                <div class="save-info">
-                  <div class="save-name">{{ save.name }}</div>
-                  <div class="save-date">{{ formatDate(save.modifiedTime) }}</div>
-                </div>
-                <div class="save-actions">
-                  <button
-                    @click="downloadSelectedSave(save.name)"
-                    :disabled="syncState === 'syncing'"
-                    class="action-btn apply-btn"
-                    :title="t('googleDrive.apply_save')"
-                  >
-                    {{ t('googleDrive.apply') }}
-                  </button>
-                  <button
-                    @click="overwriteSave(save.name)"
-                    :disabled="syncState === 'syncing'"
-                    class="action-btn overwrite-btn"
-                    :title="t('googleDrive.overwrite_save')"
-                  >
-                    {{ t('googleDrive.overwrite') }}
-                  </button>
-                  <button
-                    @click="renameSaveItem(save.name)"
-                    :disabled="syncState === 'syncing'"
-                    class="action-btn rename-btn"
-                    :title="t('googleDrive.rename_save')"
-                  >
-                    {{ t('googleDrive.rename') }}
-                  </button>
-                  <button
-                    @click="deleteSelectedSave(save.name)"
-                    :disabled="syncState === 'syncing'"
-                    class="action-btn delete-btn"
-                    :title="t('googleDrive.delete')"
-                  >
-                    {{ t('googleDrive.delete') }}
-                  </button>
-                </div>
-              </div>
+              <SaveListItem
+                v-for="save in saves"
+                :key="save.id"
+                :save="save"
+                :formatted-date="formatDate(save.modifiedTime)"
+                :disabled="syncState === 'syncing'"
+                @action="handleSaveItemAction"
+              />
             </div>
           </div>
 
@@ -326,6 +260,7 @@ import { useGoogleDriveSync } from '@/composables/useGoogleDriveSync'
 import { useGoogleDriveAuth } from '@/composables/useGoogleDriveAuth'
 import { useCollection } from '@/composables/useCollection'
 import { useToast } from '@/composables/useToast'
+import SaveListItem from '@/components/SaveListItem.vue'
 
 const { t } = useI18n()
 const { success: toastSuccess, error: toastError } = useToast()
@@ -351,6 +286,8 @@ const renameDialogOpen = ref(false)
 const renameSourceName = ref('')
 const renameTargetName = ref('')
 const renameInputRef = ref<HTMLInputElement | null>(null)
+
+type SaveAction = 'apply' | 'overwrite' | 'rename' | 'delete'
 
 // Ensure collection is always an array
 const collectionData = computed(() => {
@@ -535,6 +472,23 @@ async function deleteSelectedSave(saveName: string): Promise<void> {
   if (success) {
     await refreshSavesList()
     toastSuccess(t('googleDrive.deleted_save', { name: saveName }))
+  }
+}
+
+function handleSaveItemAction(action: SaveAction, saveName: string): void {
+  switch (action) {
+    case 'apply':
+      void downloadSelectedSave(saveName)
+      break
+    case 'overwrite':
+      void overwriteSave(saveName)
+      break
+    case 'rename':
+      void renameSaveItem(saveName)
+      break
+    case 'delete':
+      void deleteSelectedSave(saveName)
+      break
   }
 }
 
@@ -1041,31 +995,11 @@ section h3 {
 }
 
 .current-save-display {
-  padding: 8px;
-}
-
-.current-save-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 6px 8px;
-}
-
-.current-save-actions {
-  display: none;
-  gap: 4px;
-  margin-left: auto;
-}
-
-.current-save-item:hover .current-save-actions,
-.current-save-item:focus-within .current-save-actions {
-  display: flex;
+  overflow: hidden;
 }
 
 .current-save-empty {
-  padding: 8px 10px;
+  padding: 12px 14px;
   color: #666;
 }
 
@@ -1150,57 +1084,6 @@ section h3 {
   font-size: 12px;
 }
 
-.save-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 14px;
-  border-bottom: 1px solid #e8e8e8;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.save-item:last-child {
-  border-bottom: none;
-}
-
-.save-item:hover {
-  background: #f0f0f0;
-}
-
-.save-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
-.save-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.save-date {
-  font-size: 11px;
-  color: #999;
-}
-
-.save-actions {
-  display: none;
-  gap: 4px;
-  margin-left: 8px;
-  flex-shrink: 0;
-}
-
-.save-item:hover .save-actions {
-  display: flex;
-}
-
 .refresh-icon-btn {
   width: 28px;
   height: 28px;
@@ -1226,63 +1109,6 @@ section h3 {
 .refresh-icon-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.action-btn {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.action-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.apply-btn {
-  background: #4caf50;
-  color: white;
-}
-
-.apply-btn:hover:not(:disabled) {
-  background: #45a049;
-  transform: translateY(-1px);
-}
-
-.overwrite-btn {
-  background: #e85a95;
-  color: white;
-  box-shadow: 0 2px 6px rgba(232, 90, 149, 0.35);
-}
-
-.overwrite-btn:hover:not(:disabled) {
-  background: #d94a86;
-  transform: translateY(-1px);
-}
-
-.rename-btn {
-  background: #ffb74d;
-  color: white;
-}
-
-.rename-btn:hover:not(:disabled) {
-  background: #fb8c00;
-  transform: translateY(-1px);
-}
-
-.delete-btn {
-  background: #f44336;
-  color: white;
-}
-
-.delete-btn:hover:not(:disabled) {
-  background: #da190b;
-  transform: translateY(-1px);
 }
 
 /* Error Message */
