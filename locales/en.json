@@ -15,7 +15,10 @@
     "hideCompleted": "Hide Completed",
     "name": "Name",
     "rarity": "Rarity",
-    "searchByName": "Search by name..."
+    "searchByName": "Search by name...",
+    "mobileFilters": "Filters",
+    "openFilters": "Open Filters",
+    "closeFilters": "Close Filters"
   },
   "table": {
     "eureka": "Eureka",

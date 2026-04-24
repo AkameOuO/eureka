@@ -15,7 +15,10 @@
     "hideCompleted": "隱藏已完成",
     "name": "名稱",
     "rarity": "稀有度",
-    "searchByName": "按名稱搜尋..."
+    "searchByName": "按名稱搜尋...",
+    "mobileFilters": "篩選條件",
+    "openFilters": "開啟篩選",
+    "closeFilters": "關閉篩選"
   },
   "table": {
     "eureka": "祝福閃光",

@@ -25,6 +25,7 @@ const { conflictData, resolveConflict } = useGoogleDriveSync()
 
 // Sync modal state
 const isSyncModalOpen = ref(false)
+const isMobileFilterOpen = ref(false)
 
 // 確保 collection 總是陣列
 const collectionValue = computed(() => {
@@ -139,6 +140,18 @@ function handleDataChanged(): void {
   // 現在是單一實例模式，FilterBar 修改的 collection 就是這裡的同一個 ref
   // 無需手動更新，Vue 響應式系統會自動處理
 }
+
+function openMobileFilters(): void {
+  isMobileFilterOpen.value = true
+}
+
+function closeMobileFilters(): void {
+  isMobileFilterOpen.value = false
+}
+
+function toggleMobileFilters(): void {
+  isMobileFilterOpen.value = !isMobileFilterOpen.value
+}
 </script>
 
 <template>
@@ -172,7 +185,22 @@ function handleDataChanged(): void {
           :total="totalProgress.total"
         />
         <SyncActionButton @open-sync="isSyncModalOpen = true" />
+        <button
+          v-if="!isMobileFilterOpen"
+          class="mobile-filter-toggle"
+          :class="{ 'is-open': isMobileFilterOpen }"
+          @click="toggleMobileFilters"
+          :aria-label="t('filter.openFilters')"
+          :title="t('filter.openFilters')"
+          :aria-expanded="isMobileFilterOpen"
+        >
+          <svg class="mobile-filter-toggle__icon" :class="{ 'is-open': isMobileFilterOpen }" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
+          </svg>
+          <span class="sr-only">{{ t('filter.openFilters') }}</span>
+        </button>
         <FilterBar
+          class="sidebar-filter"
           :visible-rarities="visibleRarities"
           :hide-completed="hideCompleted"
           :search-name="searchName"
@@ -203,6 +231,24 @@ function handleDataChanged(): void {
       </main>
     </div>
 
+    <transition name="mobile-filter-overlay-fade">
+      <div v-if="isMobileFilterOpen" class="mobile-filter-overlay" @click.self="closeMobileFilters">
+        <section class="mobile-filter-drawer">
+          <div class="mobile-filter-drawer__header">
+            <h3>{{ t('filter.mobileFilters') }}</h3>
+            <button class="mobile-filter-close" @click="closeMobileFilters" :aria-label="t('filter.closeFilters')">×</button>
+          </div>
+          <FilterBar
+            :visible-rarities="visibleRarities"
+            :hide-completed="hideCompleted"
+            :search-name="searchName"
+            @filter-change="handleFilterChange"
+            @data-changed="handleDataChanged"
+          />
+        </section>
+      </div>
+    </transition>
+
     <AppFooter />
   </div>
 </template>
@@ -230,7 +276,15 @@ function handleDataChanged(): void {
   width: 300px;
   background: white;
   border-right: 1px solid #eee;
+  position: sticky;
+  top: 12px;
+  align-self: flex-start;
+  max-height: calc(100vh - 24px);
   overflow-y: auto;
+}
+
+.mobile-filter-toggle {
+  display: none;
 }
 
 .main-content {
@@ -248,7 +302,17 @@ function handleDataChanged(): void {
   color: #C2185B;
 }
 
+.mobile-filter-overlay {
+  display: none;
+}
+
 @media (max-width: 1200px) {
+  .content-wrapper {
+    padding: 0 5%;
+  }
+}
+
+@media (max-width: 992px) {
   .content-wrapper {
     padding: 0;
   }
@@ -265,6 +329,134 @@ function handleDataChanged(): void {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid #eee;
+    position: static;
+    top: auto;
+    align-self: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .sidebar-filter {
+    display: none;
+  }
+
+  .mobile-filter-toggle {
+    display: inline-flex;
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    z-index: 1300;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    height: 38px;
+    border: 1px solid #e0e0e0;
+    border-bottom: none;
+    border-radius: 999px 999px 0 0;
+    background: #fff;
+    color: #c2185b;
+    cursor: pointer;
+    box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+  }
+
+  .mobile-filter-toggle.is-open {
+    background: #fce4ec;
+    border-color: #f4bfd3;
+  }
+
+  .mobile-filter-toggle__icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  .mobile-filter-toggle__icon.is-open {
+    transform: rotate(180deg);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  .mobile-filter-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1200;
+  }
+
+  .mobile-filter-overlay-fade-enter-active,
+  .mobile-filter-overlay-fade-leave-active {
+    transition: opacity 0.2s ease;
+  }
+
+  .mobile-filter-overlay-fade-enter-active .mobile-filter-drawer,
+  .mobile-filter-overlay-fade-leave-active .mobile-filter-drawer {
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease;
+  }
+
+  .mobile-filter-overlay-fade-enter-from,
+  .mobile-filter-overlay-fade-leave-to {
+    opacity: 0;
+  }
+
+  .mobile-filter-overlay-fade-enter-from .mobile-filter-drawer,
+  .mobile-filter-overlay-fade-leave-to .mobile-filter-drawer {
+    transform: translateY(calc(100% + 16px));
+    opacity: 0.7;
+  }
+
+  .mobile-filter-overlay-fade-enter-to .mobile-filter-drawer,
+  .mobile-filter-overlay-fade-leave-from .mobile-filter-drawer {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .mobile-filter-drawer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 14px 14px 0 0;
+    box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+    will-change: transform, opacity;
+  }
+
+  .mobile-filter-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .mobile-filter-drawer__header h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .mobile-filter-close {
+    border: none;
+    background: transparent;
+    color: #666;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
   }
 }
 </style>
