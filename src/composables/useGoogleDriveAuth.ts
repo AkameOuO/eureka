@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { registerStorageSync } from '@/utils/storageSync'
 
 /**
  * Google Identity Services Authentication Composable
@@ -32,6 +33,7 @@ let tokenClient: any = null
 let gisScriptPromise: Promise<void> | null = null
 let scopeRetryAttempted = false
 let tokenExpiryTimer: ReturnType<typeof setTimeout> | null = null
+let authSyncListenersRegistered = false
 
 function clearTokenExpiryTimer(): void {
   if (!tokenExpiryTimer) return
@@ -108,6 +110,7 @@ function loadPersistedAuthState(): { hasValidToken: boolean; hasSavedAuthState: 
     const savedToken = localStorage.getItem(STORAGE_KEY_TOKEN)
     const savedExpiry = localStorage.getItem(STORAGE_KEY_TOKEN_EXPIRY)
     let hasValidToken = false
+    let hasExpiredToken = false
     const hasSavedAuthState = Boolean(savedToken || savedExpiry)
 
     // Check if token is still valid (not expired)
@@ -115,7 +118,7 @@ function loadPersistedAuthState(): { hasValidToken: boolean; hasSavedAuthState: 
       const expiryTime = parseInt(savedExpiry, 10)
       const now = Date.now()
 
-      if (now < expiryTime) {
+      if (Number.isFinite(expiryTime) && now < expiryTime) {
         accessToken.value = savedToken
         tokenExpiryAt.value = expiryTime
         isAuthTimedOut.value = false
@@ -125,14 +128,19 @@ function loadPersistedAuthState(): { hasValidToken: boolean; hasSavedAuthState: 
         console.log('Saved token expired, clearing')
         localStorage.removeItem(STORAGE_KEY_TOKEN)
         localStorage.removeItem(STORAGE_KEY_TOKEN_EXPIRY)
-        tokenExpiryAt.value = null
-        isAuthTimedOut.value = true
+        hasExpiredToken = true
       }
     }
 
     if (hasValidToken) {
       isSignedIn.value = true
       scheduleTokenExpiryTimer()
+    } else {
+      clearTokenExpiryTimer()
+      accessToken.value = null
+      tokenExpiryAt.value = null
+      isSignedIn.value = false
+      isAuthTimedOut.value = hasExpiredToken
     }
 
     return { hasValidToken, hasSavedAuthState }
@@ -224,9 +232,10 @@ async function initializeGIS() {
 
     isInitialized.value = true
     error.value = null
+    registerAuthStateSyncListeners()
 
     // Try to restore persisted auth state
-    loadPersistedAuthState()
+    syncAuthStateFromStorage()
 
     if (accessToken.value) {
       const tokenIsValid = await validateAccessTokenScopes(accessToken.value)
@@ -382,6 +391,8 @@ function checkSignInStatus(): boolean {
 }
 
 export function useGoogleDriveAuth() {
+  registerAuthStateSyncListeners()
+
   // Initialize on first use
   if (!isInitialized.value) {
     void initializeGIS()
@@ -406,4 +417,20 @@ export function useGoogleDriveAuth() {
     initializeGIS,
     requestAccessTokenFlow,
   }
+}
+
+function syncAuthStateFromStorage(): void {
+  loadPersistedAuthState()
+}
+
+function registerAuthStateSyncListeners(): void {
+  if (authSyncListenersRegistered) {
+    return
+  }
+
+  registerStorageSync({
+    watchedKeys: [STORAGE_KEY_TOKEN, STORAGE_KEY_TOKEN_EXPIRY],
+    onSync: syncAuthStateFromStorage,
+  })
+  authSyncListenersRegistered = true
 }

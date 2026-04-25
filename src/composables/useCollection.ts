@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { registerStorageSync } from '@/utils/storageSync'
 
 const COLLECTION_KEY = 'eureka-collection'
 const COLLECTION_UPDATED_AT_KEY = 'eureka-collection-updated-at'
@@ -193,32 +194,10 @@ function createCollection() {
     }
   }
 
-  const handleStorageEvent = (event: StorageEvent): void => {
-    if (event.storageArea !== localStorage) return
-    if (
-      event.key !== COLLECTION_STATE_KEY
-      && event.key !== COLLECTION_KEY
-      && event.key !== COLLECTION_UPDATED_AT_KEY
-    ) {
-      return
-    }
-
-    refreshCollection()
-  }
-
-  const handleVisibilityChange = (): void => {
-    if (document.visibilityState === 'visible') {
-      refreshCollection()
-    }
-  }
-
-  const handlePageShow = (): void => {
-    refreshCollection()
-  }
-
-  window.addEventListener('storage', handleStorageEvent)
-  document.addEventListener('visibilitychange', handleVisibilityChange)
-  window.addEventListener('pageshow', handlePageShow)
+  registerStorageSync({
+    watchedKeys: [COLLECTION_STATE_KEY, COLLECTION_KEY, COLLECTION_UPDATED_AT_KEY],
+    onSync: refreshCollection,
+  })
 
   const addToCollection = (id: string): void => {
     mutateCollection((base) => {
