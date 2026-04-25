@@ -136,7 +136,7 @@
 
           <div v-if="!accessToken" class="auth-status not-signed-in">
             <div class="status-icon">⚠</div>
-            <div class="status-text">{{ t('googleDrive.not_signed_in') }}</div>
+            <div class="status-text">{{ isAuthTimedOut ? t('googleDrive.sign_in_timed_out') : t('googleDrive.not_signed_in') }}</div>
             <div class="status-hint">{{ t('googleDrive.sign_in_drive_required') }}</div>
             <button @click="handleRequestPermission" class="btn btn-primary">
               {{ t('googleDrive.sign_in') }}
@@ -148,18 +148,16 @@
               <div class="status-icon">✓</div>
               <div>
                 <div class="status-text">{{ t('googleDrive.authorized') }}</div>
-                <div v-if="userProfile" class="user-info-compact">
-                  <img v-if="userProfile.picture" :src="userProfile.picture" :alt="userProfile.name" class="user-avatar-small" />
-                  <div>
-                    <div class="user-name-small">{{ userProfile.name }}</div>
-                    <div class="user-email-small">{{ userProfile.email }}</div>
-                  </div>
-                </div>
               </div>
             </div>
-            <button @click="handleSignOut" class="btn btn-secondary btn-small">
-              {{ t('googleDrive.sign_out') }}
-            </button>
+            <div class="auth-actions">
+              <button @click="handleSwitchAccount" class="btn btn-primary btn-small">
+                {{ t('googleDrive.switch_account') }}
+              </button>
+              <button @click="handleSignOut" class="btn btn-secondary btn-small">
+                {{ t('googleDrive.sign_out') }}
+              </button>
+            </div>
           </div>
         </section>
         </div>
@@ -276,7 +274,7 @@ import SaveListItem from '@/components/SaveListItem.vue'
 const { t, locale } = useI18n()
 const { success: toastSuccess, error: toastError } = useToast()
 const { syncState, syncError, saves, currentSave, conflictData, listSaves, uploadSave, renameSave, downloadSave, deleteSave, resolveConflict, clearError } = useGoogleDriveSync()
-const { isSignedIn, accessToken, userProfile, signOut, requestAccessToken } = useGoogleDriveAuth()
+const { isSignedIn, accessToken, isAuthTimedOut, signOut, switchAccount, requestAccessTokenFlow } = useGoogleDriveAuth()
 const { collection, collectionUpdatedAt, exportData, importData } = useCollection()
 
 interface Props {
@@ -626,7 +624,11 @@ watch(activeTab, (newTab) => {
  * Handle request permission
  */
 function handleRequestPermission(): void {
-  requestAccessToken()
+  requestAccessTokenFlow()
+}
+
+function handleSwitchAccount(): void {
+  switchAccount()
 }
 
 /**
@@ -975,6 +977,12 @@ section h3 {
   min-width: 0;
 }
 
+.auth-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .status-icon {
   font-size: 32px;
 }
@@ -993,31 +1001,6 @@ section h3 {
   font-size: 12px;
   color: #666;
   margin-top: 4px;
-}
-
-.user-info-compact {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 4px 0 0;
-}
-
-.user-avatar-small {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.user-name-small {
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-}
-
-.user-email-small {
-  font-size: 11px;
-  color: #999;
 }
 
 /* Form Groups */
@@ -1335,6 +1318,12 @@ section h3 {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+  }
+
+  .auth-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }
 </style>
