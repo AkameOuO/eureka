@@ -275,7 +275,7 @@ import SaveListItem from '@/components/SaveListItem.vue'
 const { t, locale } = useI18n()
 const { success: toastSuccess, error: toastError } = useToast()
 const { syncState, syncError, saves, currentSave, conflictData, listSaves, uploadSave, renameSave, downloadSave, deleteSave, resolveConflict, clearError } = useGoogleDriveSync()
-const { isSignedIn, accessToken, isAuthTimedOut, signOut, switchAccount, requestAccessTokenFlow } = useGoogleDriveAuth()
+const { isSignedIn, accessToken, isAuthTimedOut, signOut, switchAccount, requestAccessTokenFlow, error: authError, clearAuthError } = useGoogleDriveAuth()
 const { collection, collectionUpdatedAt, exportData, importData } = useCollection()
 
 interface Props {
@@ -358,6 +358,17 @@ watch(renameDialogOpen, async (isOpen) => {
   renameInputRef.value?.focus()
   renameInputRef.value?.select()
 })
+
+watch(
+  authError,
+  (newError, oldError) => {
+    if (!props.isOpen || !newError || newError === oldError) {
+      return
+    }
+
+    toastError(t('googleDrive.sign_in_failed', { message: newError }))
+  }
+)
 
 /**
  * Format date for display
@@ -625,10 +636,12 @@ watch(activeTab, (newTab) => {
  * Handle request permission
  */
 function handleRequestPermission(): void {
+  clearAuthError()
   requestAccessTokenFlow()
 }
 
 function handleSwitchAccount(): void {
+  clearAuthError()
   switchAccount()
 }
 

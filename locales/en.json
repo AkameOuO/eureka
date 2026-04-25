@@ -108,6 +108,7 @@
     "sign_in": "Sign in with Google",
     "switch_account": "Switch Account",
     "sign_out": "Sign Out",
+    "sign_in_failed": "Google sign-in failed: {message}",
     "sign_in_first": "Please sign in with your Google account first",
     "sign_in_drive_required": "Sign in to sync your saves with Google Drive.",
     "request_drive_access": "Allow access to save and sync your app data in Google Drive",

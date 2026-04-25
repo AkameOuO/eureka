@@ -391,6 +391,10 @@ function checkSignInStatus(): boolean {
   return isSignedIn.value
 }
 
+function clearAuthError(): void {
+  error.value = null
+}
+
 export function useGoogleDriveAuth() {
   registerAuthStateSyncListeners()
 
@@ -415,6 +419,7 @@ export function useGoogleDriveAuth() {
     getAccessToken,
     refreshAccessToken,
     checkSignInStatus,
+    clearAuthError,
     initializeGIS,
     requestAccessTokenFlow,
   }
