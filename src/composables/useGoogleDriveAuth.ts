@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { registerStorageSync } from '@/utils/storageSync'
 import { devLog } from '@/utils/devLog'
 
@@ -25,6 +25,34 @@ const isAuthTimedOut = ref(false)
 const error = ref<string | null>(null)
 const isLoading = ref(false)
 const tokenExpiryAt = ref<number | null>(null)
+
+watch(accessToken, (value) => {
+  if (typeof value === 'string') {
+    console.error('[Auth][watch accessToken]', value.slice(0, 8))
+    return
+  }
+
+  console.error('[Auth][watch accessToken]', value)
+})
+
+function setAccessToken(nextValue: string | null, reason: string): void {
+  const previousValue = accessToken.value
+  accessToken.value = nextValue
+
+  if (nextValue === null) {
+    console.error('[Auth][setAccessToken -> null]', {
+      reason,
+      previousPreview: typeof previousValue === 'string' ? previousValue.slice(0, 8) : previousValue,
+      stack: new Error().stack,
+    })
+    return
+  }
+
+  console.error('[Auth][setAccessToken -> string]', {
+    reason,
+    preview: nextValue.slice(0, 8),
+  })
+}
 
 // Declare Google global types for better TypeScript support
 declare let google: any
@@ -144,7 +172,7 @@ function loadPersistedAuthState(): { hasValidToken: boolean; hasSavedAuthState: 
       const now = Date.now()
 
       if (Number.isFinite(expiryTime) && now < expiryTime) {
-        accessToken.value = savedToken
+        setAccessToken(savedToken, 'loadPersistedAuthState:restore-valid-token')
         tokenExpiryAt.value = expiryTime
         isAuthTimedOut.value = false
         hasValidToken = true
@@ -162,7 +190,7 @@ function loadPersistedAuthState(): { hasValidToken: boolean; hasSavedAuthState: 
       scheduleTokenExpiryTimer()
     } else {
       clearTokenExpiryTimer()
-      accessToken.value = null
+      setAccessToken(null, 'loadPersistedAuthState:no-valid-token')
       tokenExpiryAt.value = null
       isSignedIn.value = false
       isAuthTimedOut.value = hasExpiredToken
@@ -198,7 +226,7 @@ async function validateAccessTokenScopes(token: string): Promise<boolean> {
 
 function clearAccessTokenOnly(markAsTimedOut = false): void {
   clearTokenExpiryTimer()
-  accessToken.value = null
+  setAccessToken(null, `clearAccessTokenOnly:markAsTimedOut=${markAsTimedOut}`)
   tokenExpiryAt.value = null
   isSignedIn.value = false
   isAuthTimedOut.value = markAsTimedOut
@@ -216,13 +244,41 @@ function clearAccessTokenOnly(markAsTimedOut = false): void {
  */
 function persistAuthState(expiresInSeconds?: number) {
   try {
+    devLog('[Auth][persist] start', {
+      hasToken: !!accessToken.value,
+      expiresInSeconds,
+    })
+
     if (accessToken.value) {
+      devLog('[Auth][persist] writing access token', {
+        tokenLength: accessToken.value.length,
+      })
       localStorage.setItem(STORAGE_KEY_TOKEN, accessToken.value)
+
       const safeExpiresInSeconds = Math.max(60, expiresInSeconds ?? 3600)
       const expiryTime = Date.now() + safeExpiresInSeconds * 1000
       tokenExpiryAt.value = expiryTime
+
+      devLog('[Auth][persist] writing expiry', {
+        safeExpiresInSeconds,
+        expiryTime,
+        expiryISO: new Date(expiryTime).toISOString(),
+      })
       localStorage.setItem(STORAGE_KEY_TOKEN_EXPIRY, expiryTime.toString())
+
+      const savedToken = localStorage.getItem(STORAGE_KEY_TOKEN)
+      const savedExpiry = localStorage.getItem(STORAGE_KEY_TOKEN_EXPIRY)
+      devLog('[Auth][persist] verify storage', {
+        tokenSaved: !!savedToken,
+        savedTokenLength: savedToken?.length ?? 0,
+        expirySaved: !!savedExpiry,
+        savedExpiry,
+      })
+
       scheduleTokenExpiryTimer()
+      devLog('[Auth][persist] schedule token expiry timer done')
+    } else {
+      devLog('[Auth][persist] skipped because token is empty')
     }
   } catch (err) {
     console.error('Error persisting auth state:', err)
@@ -294,7 +350,7 @@ async function handleTokenResponse(response: any) {
   }
 
   if (response.access_token) {
-    accessToken.value = response.access_token
+    setAccessToken(response.access_token, 'handleTokenResponse:received-access-token')
     devLog('Successfully obtained access token for Drive API')
 
     const tokenHasDriveScope = await validateAccessTokenScopes(response.access_token)
@@ -397,7 +453,7 @@ function signOut() {
   try {
     clearTokenExpiryTimer()
     isSignedIn.value = false
-    accessToken.value = null
+    setAccessToken(null, 'signOut:manual-sign-out')
     tokenExpiryAt.value = null
     isAuthTimedOut.value = false
     error.value = null
