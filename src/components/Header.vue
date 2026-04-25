@@ -67,7 +67,7 @@ function changeLocale(newLocale: string): void {
   align-items: center;
   margin: 0 0 30px 0;
   padding: 20px;
-  background: linear-gradient(135deg, #FFB6D9 0%, #FFC0CB 100%);
+  background: var(--color-primary-light);
   box-shadow: 0 2px 8px rgba(233, 30, 99, 0.15);
 }
 

@@ -179,7 +179,7 @@ function getColorBackground(colorStyle: Record<string, any>): string {
 }
 
 .eureka-table thead {
-  background: linear-gradient(135deg, #FFB6D9 0%, #FFC0CB 100%);
+  background: var(--color-primary-light);
   font-weight: 600;
   border-bottom: 2px solid #E91E63;
   color: #C2185B;
