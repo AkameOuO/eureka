@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { useGoogleDriveAuth } from './useGoogleDriveAuth'
+import { devLog } from '@/utils/devLog'
 
 /**
  * Google Drive Sync Composable
@@ -71,7 +72,7 @@ async function apiCall(
   }
 
   const url = `${DRIVE_API_BASE}${endpoint}`
-  console.log(`[Drive API] ${method} ${endpoint}`, { tokenLength: accessToken.value.length })
+  devLog(`[Drive API] ${method} ${endpoint}`, { tokenLength: accessToken.value.length })
 
   // Merge headers properly - Authorization MUST be the last property set
   const mergedHeaders: HeadersInit = {
@@ -79,7 +80,7 @@ async function apiCall(
     Authorization: `Bearer ${accessToken.value}`,
   }
 
-  console.log('Request headers:', {
+  devLog('Request headers:', {
     hasAuth: !!(mergedHeaders as Record<string, string>).Authorization,
     contentType: (mergedHeaders as Record<string, any>)['Content-Type'],
   })
@@ -122,16 +123,16 @@ async function getOrCreateEurekaFolder(): Promise<string> {
     const query = encodeURIComponent(
       `name='${EUREKA_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`
     )
-    console.log('Searching for eureka folder...')
+    devLog('Searching for eureka folder...')
     const response = await apiCall('GET', `/files?spaces=appDataFolder&q=${query}&fields=files(id, name)&pageSize=1`)
 
     if (response.files && response.files.length > 0) {
-      console.log('Eureka folder found:', response.files[0].id)
+      devLog('Eureka folder found:', response.files[0].id)
       return response.files[0].id
     }
 
     // Create folder if it doesn't exist
-    console.log('Eureka folder not found, creating new folder...')
+    devLog('Eureka folder not found, creating new folder...')
     const createResponse = await apiCall('POST', '/files?fields=id', {
       headers: {
         'Content-Type': 'application/json',
@@ -143,7 +144,7 @@ async function getOrCreateEurekaFolder(): Promise<string> {
       }),
     })
 
-    console.log('Eureka folder created:', createResponse.id)
+    devLog('Eureka folder created:', createResponse.id)
     return createResponse.id
   } catch (error) {
     console.error('Error in getOrCreateEurekaFolder:', error)
@@ -210,10 +211,10 @@ async function uploadSave(saveName: string, collectionData: string[]): Promise<b
     if (existingFiles.files && existingFiles.files.length > 0) {
       // File exists - update it
       fileId = existingFiles.files[0].id
-      console.log(`File already exists: ${fileId}`)
+      devLog(`File already exists: ${fileId}`)
     } else {
       // Create new file
-      console.log('Creating new file...')
+      devLog('Creating new file...')
 
       const createResponse = await apiCall('POST', '/files', {
         headers: {
@@ -227,12 +228,12 @@ async function uploadSave(saveName: string, collectionData: string[]): Promise<b
       })
 
       fileId = createResponse.id
-      console.log('File created:', fileId)
+      devLog('File created:', fileId)
     }
 
     // Update file content using simple media upload
-    console.log('Uploading file content...')
-    console.log(`File content to upload: ${fileContent.length} bytes`)
+    devLog('Uploading file content...')
+    devLog(`File content to upload: ${fileContent.length} bytes`)
 
     const { accessToken } = useGoogleDriveAuth()
     if (!accessToken.value) {
@@ -242,7 +243,7 @@ async function uploadSave(saveName: string, collectionData: string[]): Promise<b
     // Use simple media upload (uploadType=media)
     // Note: media upload requires the /upload/ endpoint, not the standard /drive/ endpoint
     const uploadUrl = `${DRIVE_API_BASE.replace('/drive/v3', '/upload/drive/v3')}/files/${fileId}?uploadType=media`
-    console.log(`Uploading to: ${uploadUrl}`)
+    devLog(`Uploading to: ${uploadUrl}`)
 
     const uploadResponse = await fetch(uploadUrl, {
       method: 'PATCH',
@@ -253,7 +254,7 @@ async function uploadSave(saveName: string, collectionData: string[]): Promise<b
       body: fileContent,
     })
 
-    console.log(`Upload response status: ${uploadResponse.status} ${uploadResponse.statusText}`)
+    devLog(`Upload response status: ${uploadResponse.status} ${uploadResponse.statusText}`)
 
     if (!uploadResponse.ok) {
       const errorText = await uploadResponse.text()
@@ -262,7 +263,7 @@ async function uploadSave(saveName: string, collectionData: string[]): Promise<b
     }
 
     const uploadResult = await uploadResponse.json()
-    console.log('Upload result:', {
+    devLog('Upload result:', {
       id: uploadResult?.id,
       name: uploadResult?.name,
       size: uploadResult?.size,
@@ -270,7 +271,7 @@ async function uploadSave(saveName: string, collectionData: string[]): Promise<b
 
     setCurrentSave(saveName)
     syncState.value = 'success'
-    console.log(`Upload successful: ${fileName}`)
+    devLog(`Upload successful: ${fileName}`)
     await listSaves()
     return true
   } catch (error) {
@@ -367,7 +368,7 @@ async function downloadSave(saveName: string): Promise<string[] | null> {
     const fileModifiedTime = fileMetadata.modifiedTime
     const fileSize = fileMetadata.size
 
-    console.log(`Found file: ${fileId}, size: ${fileSize}, mimeType: ${fileMetadata.mimeType}`)
+    devLog(`Found file: ${fileId}, size: ${fileSize}, mimeType: ${fileMetadata.mimeType}`)
 
     // Get file content using media download
     const { accessToken } = useGoogleDriveAuth()
@@ -376,7 +377,7 @@ async function downloadSave(saveName: string): Promise<string[] | null> {
       throw new Error('No access token available for download')
     }
 
-    console.log(`Downloading file with token length: ${accessToken.value.length}`)
+    devLog(`Downloading file with token length: ${accessToken.value.length}`)
 
     const downloadUrl = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`
     const contentResponse = await fetch(downloadUrl, {
@@ -386,7 +387,7 @@ async function downloadSave(saveName: string): Promise<string[] | null> {
       },
     })
 
-    console.log(`Download response status: ${contentResponse.status} ${contentResponse.statusText}`)
+    devLog(`Download response status: ${contentResponse.status} ${contentResponse.statusText}`)
 
     if (!contentResponse.ok) {
       const errorText = await contentResponse.text()
@@ -397,7 +398,7 @@ async function downloadSave(saveName: string): Promise<string[] | null> {
     // Parse the text content as JSON
     const textContent = await contentResponse.text()
 
-    console.log(`Downloaded text length: ${textContent.length}, first 100 chars: ${textContent.substring(0, 100)}`)
+    devLog(`Downloaded text length: ${textContent.length}, first 100 chars: ${textContent.substring(0, 100)}`)
 
     if (!textContent || textContent.trim().length === 0) {
       throw new Error('Downloaded file is empty')
@@ -414,7 +415,7 @@ async function downloadSave(saveName: string): Promise<string[] | null> {
     setCurrentSave(saveName)
     localStorage.setItem(`eureka-save-time-${saveName}`, fileModifiedTime)
     syncState.value = 'success'
-    console.log(`Download successful: ${remoteData.length} items`)
+    devLog(`Download successful: ${remoteData.length} items`)
     return remoteData
   } catch (error) {
     syncError.value = `Failed to download save: ${error}`

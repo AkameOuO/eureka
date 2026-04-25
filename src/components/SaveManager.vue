@@ -95,6 +95,7 @@ import { useGoogleDriveSync } from '@/composables/useGoogleDriveSync'
 import { useGoogleDriveAuth } from '@/composables/useGoogleDriveAuth'
 import { useCollection } from '@/composables/useCollection'
 import { useToast } from '@/composables/useToast'
+import { devLog } from '@/utils/devLog'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -120,7 +121,7 @@ const collectionData = computed(() => {
  */
 watch([isSignedIn, accessToken], async ([signed, token]) => {
   if (signed && token) {
-    console.log('User signed in with access token, loading saves list...')
+    devLog('User signed in with access token, loading saves list...')
     await refreshSavesList()
   }
 })
@@ -130,7 +131,7 @@ watch([isSignedIn, accessToken], async ([signed, token]) => {
  */
 onMounted(async () => {
   if (isSignedIn.value && accessToken.value) {
-    console.log('Component mounted and user is signed in, loading saves...')
+    devLog('Component mounted and user is signed in, loading saves...')
     await refreshSavesList()
   }
 })
@@ -169,7 +170,7 @@ async function downloadSelectedSave(): Promise<void> {
 
   const data = await downloadSave(selectedSave.value)
   if (data && Array.isArray(data)) {
-    console.log(`Downloaded ${data.length} items, updating local collection...`)
+    devLog(`Downloaded ${data.length} items, updating local collection...`)
     // Update local collection with downloaded data
     collection.value = data
     selectedSave.value = ''
@@ -228,9 +229,9 @@ async function deleteSelectedSave(): Promise<void> {
  * Refresh saves list from Drive
  */
 async function refreshSavesList(): Promise<void> {
-  console.log('Refreshing saves list...')
+  devLog('Refreshing saves list...')
   await listSaves()
-  console.log('Saves list refreshed, count:', saves.value.length)
+  devLog('Saves list refreshed, count:', saves.value.length)
 }
 
 /**

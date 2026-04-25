@@ -269,6 +269,7 @@ import { useGoogleDriveSync } from '@/composables/useGoogleDriveSync'
 import { useGoogleDriveAuth } from '@/composables/useGoogleDriveAuth'
 import { useCollection } from '@/composables/useCollection'
 import { useToast } from '@/composables/useToast'
+import { devLog } from '@/utils/devLog'
 import SaveListItem from '@/components/SaveListItem.vue'
 
 const { t, locale } = useI18n()
@@ -380,7 +381,7 @@ async function downloadSelectedSave(saveName: string): Promise<void> {
 
   const data = await downloadSave(saveName)
   if (data && Array.isArray(data)) {
-    console.log(`Downloaded ${data.length} items, updating local collection...`)
+    devLog(`Downloaded ${data.length} items, updating local collection...`)
     // Use collection import flow to keep reactive state and localStorage in sync.
     const imported = importData(JSON.stringify({ collection: data }))
     if (!imported) {
@@ -581,9 +582,9 @@ function handleSaveItemAction(action: SaveAction, saveName: string): void {
  * Refresh saves list from Drive
  */
 async function refreshSavesList(): Promise<void> {
-  console.log('Refreshing saves list...')
+  devLog('Refreshing saves list...')
   await listSaves()
-  console.log('Saves list refreshed, count:', saves.value.length)
+  devLog('Saves list refreshed, count:', saves.value.length)
 }
 
 /**
@@ -591,7 +592,7 @@ async function refreshSavesList(): Promise<void> {
  */
 watch([isSignedIn, accessToken], async ([signed, token]) => {
   if (signed && token) {
-    console.log('User signed in, loading saves list...')
+    devLog('User signed in, loading saves list...')
     await refreshSavesList()
   }
 })

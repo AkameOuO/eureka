@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { registerStorageSync } from '@/utils/storageSync'
+import { devLog } from '@/utils/devLog'
 
 /**
  * Google Identity Services Authentication Composable
@@ -123,9 +124,9 @@ function loadPersistedAuthState(): { hasValidToken: boolean; hasSavedAuthState: 
         tokenExpiryAt.value = expiryTime
         isAuthTimedOut.value = false
         hasValidToken = true
-        console.log('Restored access token from localStorage')
+        devLog('Restored access token from localStorage')
       } else {
-        console.log('Saved token expired, clearing')
+        devLog('Saved token expired, clearing')
         localStorage.removeItem(STORAGE_KEY_TOKEN)
         localStorage.removeItem(STORAGE_KEY_TOKEN_EXPIRY)
         hasExpiredToken = true
@@ -254,7 +255,7 @@ async function initializeGIS() {
  * Handle OAuth token response
  */
 async function handleTokenResponse(response: any) {
-  console.log('Token response received:', {
+  devLog('Token response received:', {
     hasAccessToken: !!response.access_token,
     hasError: !!response.error,
     keys: Object.keys(response),
@@ -268,7 +269,7 @@ async function handleTokenResponse(response: any) {
 
   if (response.access_token) {
     accessToken.value = response.access_token
-    console.log('Successfully obtained access token for Drive API')
+    devLog('Successfully obtained access token for Drive API')
 
     const tokenHasDriveScope = await validateAccessTokenScopes(response.access_token)
     if (!tokenHasDriveScope) {
@@ -324,12 +325,12 @@ async function requestAccessTokenFlow(forceAccountSelection = false): Promise<vo
 }
 
 async function signIn() {
-  console.log('Manual sign-in triggered')
+  devLog('Manual sign-in triggered')
   await requestAccessTokenFlow()
 }
 
 async function switchAccount() {
-  console.log('Switch account triggered')
+  devLog('Switch account triggered')
   await requestAccessTokenFlow(true)
 }
 
