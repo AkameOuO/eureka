@@ -6,7 +6,8 @@ const SETTINGS_KEY = 'eureka-settings'
 const DEFAULT_SETTINGS: Settings = {
   visibleRarities: [3, 4, 5],
   hideCompleted: false,
-  locale: 'zh_tw'
+  locale: 'zh_tw',
+  selectedLabels: []
 }
 
 function getSettingsFromStorage(): Settings {

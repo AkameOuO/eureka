@@ -39,6 +39,7 @@ const data = ref<EurekasData | null>(null)
 const selectedArea = ref<string>('all')
 const visibleRarities = computed(() => settings.value.visibleRarities)
 const hideCompleted = computed(() => settings.value.hideCompleted)
+const selectedLabels = computed(() => settings.value.selectedLabels)
 const searchName = ref<string>('')
 
 watch(
@@ -70,6 +71,15 @@ const filteredEurekas = computed(() => {
     // 稀有度篩選
     if (!visibleRarities.value.includes(eureka.rarity)) {
       return false
+    }
+
+    // 標籤篩選（OR）
+    if (selectedLabels.value.length > 0) {
+      const eurekaLabels = Array.isArray(eureka.labels) ? eureka.labels : []
+      const matched = selectedLabels.value.some((labelKey) => eurekaLabels.includes(labelKey))
+      if (!matched) {
+        return false
+      }
     }
 
     // 隱藏已完成
@@ -117,14 +127,25 @@ const areas = computed(() => {
   }))
 })
 
+const labelOptions = computed(() => {
+  if (!data.value?.labels) return []
+  return Object.entries(data.value.labels).map(([key, label]) => ({
+    key,
+    name: locale.value === 'zh_tw' ? label.name.zh_tw : label.name.en,
+    background: label.colors.background,
+    text: label.colors.text
+  }))
+})
+
 function handleAreaChange(area: string): void {
   selectedArea.value = area
 }
 
-function handleFilterChange(rarities: number[], completed: boolean, name?: string): void {
+function handleFilterChange(rarities: number[], completed: boolean, name?: string, labels?: string[]): void {
   updateSettings({
     visibleRarities: rarities,
-    hideCompleted: completed
+    hideCompleted: completed,
+    selectedLabels: labels ?? []
   })
   if (name !== undefined) {
     searchName.value = name
@@ -204,6 +225,8 @@ function toggleMobileFilters(): void {
           :visible-rarities="visibleRarities"
           :hide-completed="hideCompleted"
           :search-name="searchName"
+          :label-options="labelOptions"
+          :selected-labels="selectedLabels"
           @filter-change="handleFilterChange"
           @data-changed="handleDataChanged"
         />
@@ -242,6 +265,8 @@ function toggleMobileFilters(): void {
             :visible-rarities="visibleRarities"
             :hide-completed="hideCompleted"
             :search-name="searchName"
+            :label-options="labelOptions"
+            :selected-labels="selectedLabels"
             @filter-change="handleFilterChange"
             @data-changed="handleDataChanged"
           />
@@ -273,7 +298,8 @@ function toggleMobileFilters(): void {
 }
 
 .sidebar {
-  width: 300px;
+  max-width: 340px;
+  width: 35%;
   background: white;
   border-right: 1px solid #eee;
   position: sticky;
@@ -326,6 +352,7 @@ function toggleMobileFilters(): void {
   }
 
   .sidebar {
+    max-width: unset;
     width: 100%;
     border-right: none;
     border-bottom: 1px solid #eee;

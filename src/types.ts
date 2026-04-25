@@ -55,4 +55,5 @@ export interface Settings {
   locale?: string
   visibleRarities: number[]
   hideCompleted: boolean
+  selectedLabels: string[]
 }

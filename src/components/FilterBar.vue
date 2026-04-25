@@ -6,10 +6,12 @@ interface Props {
   visibleRarities: number[]
   hideCompleted: boolean
   searchName?: string
+  labelOptions?: Array<{ key: string; name: string; background: string; text: string }>
+  selectedLabels?: string[]
 }
 
 interface Emits {
-  (e: 'filter-change', rarities: number[], completed: boolean, name?: string): void
+  (e: 'filter-change', rarities: number[], completed: boolean, name?: string, labels?: string[]): void
   (e: 'data-changed'): void
 }
 
@@ -20,6 +22,7 @@ const { t } = useI18n()
 const rarities = ref<number[]>([3, 4, 5])
 const hideCompleted = ref<boolean>(false)
 const searchName = ref<string>('')
+const selectedLabels = ref<string[]>([])
 
 watch(
   () => props.visibleRarities,
@@ -44,8 +47,16 @@ watch(
   }
 )
 
+watch(
+  () => props.selectedLabels,
+  (newVal) => {
+    selectedLabels.value = newVal ? [...newVal] : []
+  },
+  { immediate: true }
+)
+
 function updateFilters(): void {
-  emit('filter-change', rarities.value, hideCompleted.value, searchName.value)
+  emit('filter-change', rarities.value, hideCompleted.value, searchName.value, selectedLabels.value)
 }
 
 function toggleRarity(rarity: number): void {
@@ -61,6 +72,16 @@ function toggleRarity(rarity: number): void {
 
 function toggleHideCompleted(): void {
   hideCompleted.value = !hideCompleted.value
+  updateFilters()
+}
+
+function toggleLabel(labelKey: string): void {
+  const index = selectedLabels.value.indexOf(labelKey)
+  if (index > -1) {
+    selectedLabels.value.splice(index, 1)
+  } else {
+    selectedLabels.value.push(labelKey)
+  }
   updateFilters()
 }
 </script>
@@ -107,6 +128,23 @@ function toggleHideCompleted(): void {
       </label>
     </div>
 
+    <!-- Label Filter (OR) -->
+    <div v-if="labelOptions && labelOptions.length > 0" class="filter-section">
+      <h3 class="filter-title">{{ t('filter.label') }}</h3>
+      <div class="button-group label-group">
+        <button
+          v-for="label in labelOptions"
+          :key="label.key"
+          :class="{ 'is-selected': selectedLabels.includes(label.key) }"
+          @click="toggleLabel(label.key)"
+          class="filter-button label-button"
+          :style="{ background: label.background, color: label.text, borderColor: label.text }"
+        >
+          {{ label.name }}
+        </button>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -148,6 +186,10 @@ function toggleHideCompleted(): void {
   gap: 8px;
 }
 
+.label-group {
+  flex-wrap: wrap;
+}
+
 .filter-button {
   padding: 8px 12px;
   border: 1px solid var(--color-border-secondary);
@@ -169,6 +211,38 @@ function toggleHideCompleted(): void {
   background: var(--color-primary-light);
   color: var(--color-text-secondary);
   border-color: var(--color-primary-light);
+}
+
+.label-button {
+  position: relative;
+  text-align: center;
+  font-weight: 600;
+}
+
+.label-button:hover {
+  filter: brightness(0.98);
+}
+
+.label-button.is-selected {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
+.label-button.is-selected::after {
+  content: '✓';
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+  border: 1px solid #fff;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
 }
 
 .checkbox-label {
