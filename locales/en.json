@@ -4,7 +4,10 @@
     "description": "A collection tracker for Infinity Nikki Eureka sets that helps you track progress and sync saves to Google Drive after sign-in.",
     "unofficialDisclaimer": "This is an unofficial tool and is not affiliated with Infinity Nikki or Infold Games.",
     "privacyPolicy": "Privacy Policy",
-    "termsOfService": "Terms of Service"
+    "termsOfService": "Terms of Service",
+    "feedbackTitle": "Feedback",
+    "feedbackDescription": "If you have feature ideas, bug reports, or general thoughts, please use this form to share them.",
+    "feedbackAction": "Open Feedback Form"
   },
   "header": {
     "title": "Eureka Collection",

@@ -7,6 +7,7 @@ const { t, locale } = useI18n()
 // 根據當前語言決定使用的連結版本
 const privacyPolicyUrl = computed(() => locale.value === 'zh_tw' ? '/privacy-policy.html' : '/privacy-policy-en.html')
 const termsOfServiceUrl = computed(() => locale.value === 'zh_tw' ? '/terms-of-service.html' : '/terms-of-service-en.html')
+const feedbackFormUrl = import.meta.env.VITE_FEEDBACK_FORM_URL || ''
 </script>
 
 <template>
@@ -18,6 +19,15 @@ const termsOfServiceUrl = computed(() => locale.value === 'zh_tw' ? '/terms-of-s
       </p>
       <p class="app-footer__disclaimer">{{ t('app.unofficialDisclaimer') }}</p>
       <p class="app-footer__copyright">© 2026 AkameOuO</p>
+    </div>
+    <div v-if="feedbackFormUrl" class="app-footer__feedback">
+      <div class="app-footer__feedback-copy">
+        <p class="app-footer__feedback-title">{{ t('app.feedbackTitle') }}</p>
+        <p class="app-footer__feedback-text">{{ t('app.feedbackDescription') }}</p>
+      </div>
+      <a class="app-footer__feedback-link" :href="feedbackFormUrl" target="_blank" rel="noopener noreferrer">
+        {{ t('app.feedbackAction') }}
+      </a>
     </div>
     <div class="app-footer__links">
       <a class="app-footer__link" :href="privacyPolicyUrl" target="_blank" rel="noopener noreferrer">
@@ -49,6 +59,61 @@ const termsOfServiceUrl = computed(() => locale.value === 'zh_tw' ? '/terms-of-s
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.app-footer__feedback {
+  flex: 0 1 320px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #f2d7e3;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff 0%, #fff7fb 100%);
+  box-shadow: 0 8px 18px rgba(194, 24, 91, 0.06);
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.app-footer__feedback-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.app-footer__feedback-title {
+  margin: 0;
+  color: #8f1241;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.app-footer__feedback-text {
+  margin: 0;
+  color: #7c6f77;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.app-footer__feedback-link {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #c2185b;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-footer__feedback-link:hover {
+  background: #a9154f;
 }
 
 .app-footer__text {
@@ -103,11 +168,34 @@ const termsOfServiceUrl = computed(() => locale.value === 'zh_tw' ? '/terms-of-s
   gap: 8px;
 }
 
+@media (max-width: 1200px) {
+  .app-footer__feedback {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .app-footer__feedback-link {
+    width: fit-content;
+    max-width: 100%;
+    padding: 6px 10px;
+    font-size: 11px;
+    align-self: flex-start;
+    white-space: normal;
+  }
+
+  .app-footer__feedback-text {
+    line-height: 1.45;
+  }
+}
+
 @media (max-width: 768px) {
   .app-footer {
     flex-direction: column;
-    align-items: flex-start;
-    padding: 14px 15px;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px 15px;
   }
 
   .app-footer__text {
@@ -116,11 +204,19 @@ const termsOfServiceUrl = computed(() => locale.value === 'zh_tw' ? '/terms-of-s
 
   .app-footer__content {
     width: 100%;
+    gap: 1px;
+  }
+
+  .app-footer__feedback {
+    width: 100%;
+    max-width: 100%;
+    flex-basis: auto;
   }
 
   .app-footer__links {
     width: 100%;
     flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }
 </style>
