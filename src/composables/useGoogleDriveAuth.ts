@@ -335,51 +335,54 @@ async function initializeGIS() {
  * Handle OAuth token response
  */
 async function handleTokenResponse(response: any) {
-  finishAuthRequestGuard()
+  try {
+    devLog('Token response received:', {
+      hasAccessToken: !!response.access_token,
+      hasError: !!response.error,
+      keys: Object.keys(response),
+    })
 
-  devLog('Token response received:', {
-    hasAccessToken: !!response.access_token,
-    hasError: !!response.error,
-    keys: Object.keys(response),
-  })
-
-  if (response.error) {
-    console.error('OAuth error:', response.error, response.error_description || '')
-    error.value = `OAuth error: ${response.error}`
-    return
-  }
-
-  if (response.access_token) {
-    setAccessToken(response.access_token, 'handleTokenResponse:received-access-token')
-    devLog('Successfully obtained access token for Drive API')
-
-    const tokenHasDriveScope = await validateAccessTokenScopes(response.access_token)
-    if (!tokenHasDriveScope) {
-      console.warn('Drive scope is missing from the access token')
-      clearAccessTokenOnly()
-
-      if (!scopeRetryAttempted) {
-        scopeRetryAttempted = true
-        error.value = null
-        await requestAccessTokenFlow(true)
-        return
-      }
-
-      error.value = 'Google authorization did not include Drive access. Please try again.'
+    if (response.error) {
+      console.error('OAuth error:', response.error, response.error_description || '')
+      error.value = `OAuth error: ${response.error}`
       return
     }
 
-    scopeRetryAttempted = false
+    if (response.access_token) {
+      setAccessToken(response.access_token, 'handleTokenResponse:received-access-token')
+      devLog('Successfully obtained access token for Drive API')
 
-    isSignedIn.value = true
-    isAuthTimedOut.value = false
-    error.value = null
+      const tokenHasDriveScope = await validateAccessTokenScopes(response.access_token)
+      if (!tokenHasDriveScope) {
+        console.warn('Drive scope is missing from the access token')
+        clearAccessTokenOnly()
 
-    // Save token to localStorage
-    persistAuthState(response.expires_in)
-  } else {
-    console.warn('Token response received but no access_token found', response)
-    error.value = 'Failed to obtain access token'
+        if (!scopeRetryAttempted) {
+          scopeRetryAttempted = true
+          error.value = null
+          await requestAccessTokenFlow(true)
+          return
+        }
+
+        error.value = 'Google authorization did not include Drive access. Please try again.'
+        return
+      }
+
+      scopeRetryAttempted = false
+
+      isSignedIn.value = true
+      isAuthTimedOut.value = false
+      error.value = null
+
+      // Save token to localStorage
+      persistAuthState(response.expires_in)
+    } else {
+      console.warn('Token response received but no access_token found', response)
+      error.value = 'Failed to obtain access token'
+    }
+  } finally {
+    // Keep in-flight guard during token validation and persistence to avoid storage sync race.
+    finishAuthRequestGuard()
   }
 }
 
