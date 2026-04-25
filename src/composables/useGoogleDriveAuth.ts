@@ -35,6 +35,30 @@ let gisScriptPromise: Promise<void> | null = null
 let scopeRetryAttempted = false
 let tokenExpiryTimer: ReturnType<typeof setTimeout> | null = null
 let authSyncListenersRegistered = false
+let isAuthRequestInFlight = false
+let authRequestTimeout: ReturnType<typeof setTimeout> | null = null
+
+function clearAuthRequestTimeout(): void {
+  if (!authRequestTimeout) return
+  clearTimeout(authRequestTimeout)
+  authRequestTimeout = null
+}
+
+function startAuthRequestGuard(): void {
+  isAuthRequestInFlight = true
+  clearAuthRequestTimeout()
+
+  // Avoid getting stuck in "in-flight" state when user dismisses auth prompt.
+  authRequestTimeout = setTimeout(() => {
+    isAuthRequestInFlight = false
+    clearAuthRequestTimeout()
+  }, 30_000)
+}
+
+function finishAuthRequestGuard(): void {
+  isAuthRequestInFlight = false
+  clearAuthRequestTimeout()
+}
 
 function clearTokenExpiryTimer(): void {
   if (!tokenExpiryTimer) return
@@ -255,6 +279,8 @@ async function initializeGIS() {
  * Handle OAuth token response
  */
 async function handleTokenResponse(response: any) {
+  finishAuthRequestGuard()
+
   devLog('Token response received:', {
     hasAccessToken: !!response.access_token,
     hasError: !!response.error,
@@ -317,6 +343,8 @@ async function requestAccessTokenFlow(forceAccountSelection = false): Promise<vo
     error.value = 'Google authorization is not ready'
     return
   }
+
+  startAuthRequestGuard()
 
   tokenClient.requestAccessToken({
     prompt: forceAccountSelection ? 'select_account' : '',
@@ -426,6 +454,11 @@ export function useGoogleDriveAuth() {
 }
 
 function syncAuthStateFromStorage(): void {
+  if (isAuthRequestInFlight) {
+    devLog('Skip auth state sync during in-flight auth request')
+    return
+  }
+
   loadPersistedAuthState()
 }
 

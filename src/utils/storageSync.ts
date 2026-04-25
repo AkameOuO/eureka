@@ -2,7 +2,6 @@ interface StorageSyncOptions {
   watchedKeys: string[]
   onSync: () => void
   includeVisibilityChange?: boolean
-  includePageShow?: boolean
 }
 
 /**
@@ -27,18 +26,10 @@ export function registerStorageSync(options: StorageSyncOptions): () => void {
     }
   }
 
-  const handlePageShow = (): void => {
-    options.onSync()
-  }
-
   window.addEventListener('storage', handleStorageEvent)
 
   if (options.includeVisibilityChange !== false) {
     document.addEventListener('visibilitychange', handleVisibilityChange)
-  }
-
-  if (options.includePageShow !== false) {
-    window.addEventListener('pageshow', handlePageShow)
   }
 
   return () => {
@@ -46,10 +37,6 @@ export function registerStorageSync(options: StorageSyncOptions): () => void {
 
     if (options.includeVisibilityChange !== false) {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
-    }
-
-    if (options.includePageShow !== false) {
-      window.removeEventListener('pageshow', handlePageShow)
     }
   }
 }
