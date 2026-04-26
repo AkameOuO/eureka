@@ -27,7 +27,12 @@ export function registerStorageSync(options: StorageSyncOptions): () => void {
     }
   }
 
-  const handlePageShow = (): void => {
+  const handlePageShow = (event: PageTransitionEvent): void => {
+    // `pageshow` fires on every page load. Only sync on BFCache restore.
+    if (!event.persisted) {
+      return
+    }
+
     options.onSync()
   }
 

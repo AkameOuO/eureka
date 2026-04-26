@@ -35,6 +35,30 @@ let gisScriptPromise: Promise<void> | null = null
 let scopeRetryAttempted = false
 let tokenExpiryTimer: ReturnType<typeof setTimeout> | null = null
 let authSyncListenersRegistered = false
+let isAuthRequestInFlight = false
+let authRequestTimeout: ReturnType<typeof setTimeout> | null = null
+
+function clearAuthRequestTimeout(): void {
+  if (!authRequestTimeout) return
+  clearTimeout(authRequestTimeout)
+  authRequestTimeout = null
+}
+
+function startAuthRequestGuard(): void {
+  isAuthRequestInFlight = true
+  clearAuthRequestTimeout()
+
+  // Avoid getting stuck in "in-flight" state when user dismisses auth prompt.
+  authRequestTimeout = setTimeout(() => {
+    isAuthRequestInFlight = false
+    clearAuthRequestTimeout()
+  }, 30_000)
+}
+
+function finishAuthRequestGuard(): void {
+  isAuthRequestInFlight = false
+  clearAuthRequestTimeout()
+}
 
 function clearTokenExpiryTimer(): void {
   if (!tokenExpiryTimer) return
@@ -255,49 +279,54 @@ async function initializeGIS() {
  * Handle OAuth token response
  */
 async function handleTokenResponse(response: any) {
-  devLog('Token response received:', {
-    hasAccessToken: !!response.access_token,
-    hasError: !!response.error,
-    keys: Object.keys(response),
-  })
+  try {
+    devLog('Token response received:', {
+      hasAccessToken: !!response.access_token,
+      hasError: !!response.error,
+      keys: Object.keys(response),
+    })
 
-  if (response.error) {
-    console.error('OAuth error:', response.error, response.error_description || '')
-    error.value = `OAuth error: ${response.error}`
-    return
-  }
-
-  if (response.access_token) {
-    accessToken.value = response.access_token
-    devLog('Successfully obtained access token for Drive API')
-
-    const tokenHasDriveScope = await validateAccessTokenScopes(response.access_token)
-    if (!tokenHasDriveScope) {
-      console.warn('Drive scope is missing from the access token')
-      clearAccessTokenOnly()
-
-      if (!scopeRetryAttempted) {
-        scopeRetryAttempted = true
-        error.value = null
-        await requestAccessTokenFlow(true)
-        return
-      }
-
-      error.value = 'Google authorization did not include Drive access. Please try again.'
+    if (response.error) {
+      console.error('OAuth error:', response.error, response.error_description || '')
+      error.value = `OAuth error: ${response.error}`
       return
     }
 
-    scopeRetryAttempted = false
+    if (response.access_token) {
+      accessToken.value = response.access_token
+      devLog('Successfully obtained access token for Drive API')
 
-    isSignedIn.value = true
-    isAuthTimedOut.value = false
-    error.value = null
+      const tokenHasDriveScope = await validateAccessTokenScopes(response.access_token)
+      if (!tokenHasDriveScope) {
+        console.warn('Drive scope is missing from the access token')
+        clearAccessTokenOnly()
 
-    // Save token to localStorage
-    persistAuthState(response.expires_in)
-  } else {
-    console.warn('Token response received but no access_token found', response)
-    error.value = 'Failed to obtain access token'
+        if (!scopeRetryAttempted) {
+          scopeRetryAttempted = true
+          error.value = null
+          await requestAccessTokenFlow(true)
+          return
+        }
+
+        error.value = 'Google authorization did not include Drive access. Please try again.'
+        return
+      }
+
+      scopeRetryAttempted = false
+
+      isSignedIn.value = true
+      isAuthTimedOut.value = false
+      error.value = null
+
+      // Save token to localStorage
+      persistAuthState(response.expires_in)
+    } else {
+      console.warn('Token response received but no access_token found', response)
+      error.value = 'Failed to obtain access token'
+    }
+  } finally {
+    // Keep in-flight guard during token validation and persistence to avoid storage sync race.
+    finishAuthRequestGuard()
   }
 }
 
@@ -317,6 +346,8 @@ async function requestAccessTokenFlow(forceAccountSelection = false): Promise<vo
     error.value = 'Google authorization is not ready'
     return
   }
+
+  startAuthRequestGuard()
 
   tokenClient.requestAccessToken({
     prompt: forceAccountSelection ? 'select_account' : '',
@@ -421,6 +452,11 @@ export function useGoogleDriveAuth() {
 }
 
 function syncAuthStateFromStorage(): void {
+  if (isAuthRequestInFlight) {
+    devLog('Skip auth state sync during in-flight auth request')
+    return
+  }
+
   loadPersistedAuthState()
 }
 
