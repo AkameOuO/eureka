@@ -24,14 +24,55 @@ function getBrowserLocale(): string {
 // 從 localStorage 獲取用戶設定的語言
 function getSavedLocale(): string | null {
   try {
-    const stored = localStorage.getItem('eureka-collection')
+    // 與 useSettings 保持相同的 storage key
+    const stored = localStorage.getItem('eureka-settings')
     if (stored) {
       const data = JSON.parse(stored)
-      return data.settings?.locale || null
+      return data?.locale || data?.settings?.locale || null
     }
   } catch {
     return null
   }
+  return null
+}
+
+function getStoredLocaleRecord(): Record<string, unknown> | null {
+  try {
+    const stored = localStorage.getItem('eureka-settings')
+    if (!stored) return null
+    const parsed = JSON.parse(stored)
+    if (parsed && typeof parsed === 'object') {
+      return parsed as Record<string, unknown>
+    }
+  } catch {
+    return null
+  }
+  return null
+}
+
+function saveLocaleToSettings(locale: string): void {
+  try {
+    const key = 'eureka-settings'
+    const base = getStoredLocaleRecord() || {}
+    // support both flat and nested shapes
+    if (base && typeof base === 'object') {
+      base.locale = locale
+      const nestedSettings = base.settings as { locale?: string } | undefined
+      if (nestedSettings && typeof nestedSettings === 'object') {
+        nestedSettings.locale = locale
+        base.settings = nestedSettings
+      }
+    }
+    localStorage.setItem(key, JSON.stringify(base))
+  } catch {}
+}
+
+function pathToLocaleFromPathname(pathname: string): string | null {
+  // 解析第一個 path segment，如 /en 或 /zh-tw
+  const seg = (pathname || '').split('/').filter(Boolean)[0]
+  if (!seg) return null
+  if (seg.toLowerCase() === 'en') return 'en'
+  if (seg.toLowerCase() === 'zh-tw' || seg.toLowerCase() === 'zh_tw' || seg.toLowerCase() === 'zh') return 'zh_tw'
   return null
 }
 
@@ -54,9 +95,31 @@ const messages = languageCodes.reduce(
 )
 
 // 確定初始語言
-let locale = getSavedLocale() || getBrowserLocale()
+// 先檢查 URL path 是否帶語言碼（/en, /zh-tw）
+let detectedLocale: string | null = null
+try {
+  detectedLocale = pathToLocaleFromPathname(window?.location?.pathname || '')
+} catch {}
+
+let locale = detectedLocale || getSavedLocale() || getBrowserLocale()
 if (!isValidLocale(locale)) {
   locale = defaultLanguage
+}
+
+// 若沒有既有設定，將初始推定語言寫回 settings，避免與 useSettings 預設值不同步
+if (!getSavedLocale()) {
+  saveLocaleToSettings(locale)
+}
+
+// 如果從 path 偵測到語言，儲存進 settings 並清理網址（不重新導向）
+if (detectedLocale && isValidLocale(detectedLocale)) {
+  saveLocaleToSettings(detectedLocale)
+  try {
+    const segments = window.location.pathname.split('/').filter(Boolean)
+    const remainingPath = segments.length > 1 ? '/' + segments.slice(1).join('/') : '/'
+    const newUrl = remainingPath + window.location.search + window.location.hash
+    window.history.replaceState({}, '', newUrl)
+  } catch {}
 }
 
 const i18nConfig: I18nOptions = {

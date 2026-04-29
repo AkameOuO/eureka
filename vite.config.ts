@@ -41,10 +41,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
-        privacyPolicy: fileURLToPath(new URL('./privacy-policy.html', import.meta.url)),
-        privacyPolicy_en: fileURLToPath(new URL('./privacy-policy-en.html', import.meta.url)),
-        termsOfService: fileURLToPath(new URL('./terms-of-service.html', import.meta.url)),
-        termsOfService_en: fileURLToPath(new URL('./terms-of-service-en.html', import.meta.url)),
+        privacyPolicy: fileURLToPath(new URL('./zh-tw/privacy-policy/index.html', import.meta.url)),
+        privacyPolicy_en: fileURLToPath(new URL('./en/privacy-policy/index.html', import.meta.url)),
+        termsOfService: fileURLToPath(new URL('./zh-tw/terms-of-service/index.html', import.meta.url)),
+        termsOfService_en: fileURLToPath(new URL('./en/terms-of-service/index.html', import.meta.url)),
       },
     },
   },

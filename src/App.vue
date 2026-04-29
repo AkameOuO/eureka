@@ -50,6 +50,21 @@ watch(
   { immediate: true }
 )
 
+// 同步更新 <html lang=""> 屬性，讓搜尋引擎與輔助工具能正確識別語言
+watch(
+  () => locale.value,
+  (newLocale: string) => {
+    const map: Record<string, string> = {
+      en: 'en',
+      zh_tw: 'zh-TW'
+    }
+    try {
+      document.documentElement.lang = map[newLocale] || 'en'
+    } catch {}
+  },
+  { immediate: true }
+)
+
 onMounted(() => {
   data.value = eurekasData as EurekasData
 

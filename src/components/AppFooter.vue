@@ -5,8 +5,8 @@ import { computed } from 'vue'
 const { t, locale } = useI18n()
 
 // 根據當前語言決定使用的連結版本
-const privacyPolicyUrl = computed(() => locale.value === 'zh_tw' ? '/privacy-policy.html' : '/privacy-policy-en.html')
-const termsOfServiceUrl = computed(() => locale.value === 'zh_tw' ? '/terms-of-service.html' : '/terms-of-service-en.html')
+const privacyPolicyUrl = computed(() => locale.value === 'zh_tw' ? '/zh-tw/privacy-policy/' : '/en/privacy-policy/')
+const termsOfServiceUrl = computed(() => locale.value === 'zh_tw' ? '/zh-tw/terms-of-service/' : '/en/terms-of-service/')
 const feedbackFormUrl = import.meta.env.VITE_FEEDBACK_FORM_URL || ''
 </script>
 

@@ -13,7 +13,11 @@ const { locale, t } = useI18n()
 
 const isDropdownOpen = ref(false)
 
-function changeLocale(newLocale: string): void {
+function onLocaleLinkClick(newLocale: string): void {
+  const path = newLocale === 'zh_tw' ? '/zh-tw' : `/${newLocale}`
+  try {
+    window.history.pushState({}, '', path)
+  } catch {}
   emit('locale-change', newLocale)
   isDropdownOpen.value = false
 }
@@ -28,7 +32,6 @@ function changeLocale(newLocale: string): void {
     </div>
 
     <div class="header-right">
-      <!-- Language Dropdown -->
       <div class="locale-dropdown">
         <button
           class="dropdown-toggle"
@@ -45,15 +48,16 @@ function changeLocale(newLocale: string): void {
           <span class="arrow" :class="{ open: isDropdownOpen }">▼</span>
         </button>
         <div v-if="isDropdownOpen" class="dropdown-menu">
-          <button
+          <a
             v-for="lang in languages"
             :key="lang.code"
             class="dropdown-item"
             :class="{ active: locale === lang.code }"
-            @click="changeLocale(lang.code)"
+            :href="lang.code === 'zh_tw' ? '/zh-tw' : `/${lang.code}`"
+            @click.prevent="onLocaleLinkClick(lang.code)"
           >
             {{ lang.flag && `${lang.flag} ` }}{{ lang.nativeName }}
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -175,6 +179,8 @@ function changeLocale(newLocale: string): void {
   font-size: 14px;
   text-align: left;
   transition: all 0.2s ease;
+  display: block;
+  text-decoration: none;
 }
 
 .dropdown-item:hover {
