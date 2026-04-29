@@ -44,7 +44,8 @@ watch(
     if (newVal !== undefined) {
       searchName.value = newVal
     }
-  }
+  },
+  { immediate: true }
 )
 
 watch(
