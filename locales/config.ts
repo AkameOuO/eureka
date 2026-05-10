@@ -34,4 +34,4 @@ export const languages: LanguageConfig[] = [
 ]
 
 export const languageCodes = languages.map(lang => lang.code)
-export const defaultLanguage = 'zh-tw'
+export const defaultLanguage = 'zh_tw'
