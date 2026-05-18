@@ -111,15 +111,10 @@ if (!getSavedLocale()) {
   saveLocaleToSettings(locale)
 }
 
-// 如果從 path 偵測到語言，儲存進 settings 並清理網址（不重新導向）
+// 如果從 path 偵測到語言，儲存進 settings，但不要修改或清理網址（保留原始 path 以利 SEO 與爬蟲）
 if (detectedLocale && isValidLocale(detectedLocale)) {
   saveLocaleToSettings(detectedLocale)
-  try {
-    const segments = window.location.pathname.split('/').filter(Boolean)
-    const remainingPath = segments.length > 1 ? '/' + segments.slice(1).join('/') : '/'
-    const newUrl = remainingPath + window.location.search + window.location.hash
-    window.history.replaceState({}, '', newUrl)
-  } catch {}
+  // 注意：不再執行 window.history.replaceState 或任何 URL 重寫
 }
 
 const i18nConfig: I18nOptions = {
